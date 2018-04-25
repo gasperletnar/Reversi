@@ -1,19 +1,19 @@
 package logika;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Igra {
 	private Polje[][] plosca;
 	private Igralec naPotezi;
 	public static final int N = 8;
 	private static final int[][] tabelaSmeri = {{1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1,1}, {0,1}};
-	
+
 	/**
 	 * Ustvari igralno plosco, vsa polja prazna, razen sredinska 4.
 	 */
-	
+
 	public Igra() {
 		plosca = new Polje[N][N];
 		for (int i = 0; i < N; i++) {
@@ -21,44 +21,58 @@ public class Igra {
 				plosca[i][j] = Polje.PRAZNO;
 			}
 		}
-		plosca[N/2-1][N/2-1] = Polje.B_POLJE;
-		plosca[N/2][N/2] = Polje.B_POLJE;
-		plosca[N/2-1][N/2] = Polje.C_POLJE;
-		plosca[N/2][N/2-1] = Polje.C_POLJE;
-		
+		plosca[N/2-1][N/2-1] = Polje.BELO;
+		plosca[N/2][N/2] = Polje.BELO;
+		plosca[N/2-1][N/2] = Polje.CRNO;
+		plosca[N/2][N/2-1] = Polje.CRNO;
+
 		naPotezi = Igralec.BELI;
 	}
-	
+
 	/**
 	 * Izpise tabelo polj in cigavo je trenutno polje - prazno, od crnega, od belega.
 	 */
-	
+
 	public void izpis() {
 		for (int i = 0; i < N; i++) {
 			System.out.println(Arrays.deepToString(plosca[i]));
 		}
 	}
-	
+
 	/**
-	 * Izracuna vse mozne poteze, ki jih ima igralec, ki je trenutno na potezi na voljo.
-	 * 
-	 * @return 
+	 * @return Vrne polje z barvo enako kot je barva aktivnega igralca.
 	 */
-	
-	public Map<Poteza, Polje> slovarDovoljenih() {
-		HashMap<Poteza, Polje> potezeInPolja = new HashMap<Poteza, Polje>();
-		
-		// Ideja: Ce na potezi beli, se pogleda na katero prazno polje lahko postavi zeton tako, da se v vseh 8 smeri pogleda
-		//        ce je tam postavljen kak crni zeton. Ce je, se nadaljuje v isti smeri, dokler so v liniji crni zetoni,
-		//        koncati pa z belim zetonom. Poteza se shrani v kljuc slovarja, v vrednosti pa za vsako smer koordinate
-		//        belega zetona, ki je za linijo crnih zetonov, ki se zacne od poteze naprej. Tako se bo nato ob primeru izvedbe
-		//        poteze vsem poljem med potezo in koordinatami belih polj zamenjalo enum type iz C_POLJE na B_POLJE.
-		
-		// Povpraviti: Verjetno boljše, èe imamo v vrednostih slovarja seznam koordinat belih polj od dane poteze preko crnih, kakor
-		//             seznam polj.
-		
-		// Za enkrat privzela, da na potezi beli.
-		
+	public Polje aktivniPolja() {
+		Polje aktivnaPolja = Polje.PRAZNO;
+		if (naPotezi == Igralec.BELI) {
+			aktivnaPolja = Polje.BELO;
+		} else {
+			aktivnaPolja = Polje.CRNO;
+		}
+		return aktivnaPolja;
+	}
+
+	/**
+	 * @return Vrne polje z barvo nasprotno od aktivnega igralca.
+	 */
+	public Polje nasprotniPolja() {
+		Polje nasprotnaPolja = Polje.PRAZNO;
+		if (naPotezi == Igralec.BELI) {
+			nasprotnaPolja = Polje.CRNO;
+		} else {
+			nasprotnaPolja = Polje.BELO;
+		}
+		return nasprotnaPolja;
+	}
+
+	/**
+	 * @return Seznam moznih potez aktivnega igralca.
+	 */
+
+	public List<Poteza> seznamDovoljenih() {
+		LinkedList<Poteza>  dovoljene = new LinkedList<Poteza>();	
+		Polje aktivno = aktivniPolja();
+		Polje nasprotno = nasprotniPolja();	
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				if (plosca[i][j] == Polje.PRAZNO) {
@@ -68,24 +82,54 @@ public class Igra {
 						int x = smer[0];
 						int y = smer[1];
 						// Robni pogoji + polje mora biti nasprotno od trenutnega igralca.
-						while ((0 <= i+x) && (0 <= j+y) && (i+x < N) && (j+y < N) && (plosca[i+x][j+y] == Polje.C_POLJE)) {
+						while ((0 <= i+x) && (0 <= j+y) && (i+x < N) && (j+y < N) && (plosca[i+x][j+y] == nasprotno)) {
 							k++;
 							x += smer[0];
 							y += smer[1];
 						}
 						// Vsaj eno polje nasprotnega igralca + naslednje polje takoj za linijo nasprotnikovih mora biti od igralca na potezi.
-						if (k > 0 && plosca[i+x][j+y] == Polje.B_POLJE) {
-							potezeInPolja.put(moznaPoteza, plosca[i+x][j+y]);
+						if (k > 0 && plosca[i+x][j+y] == aktivno) {
+							dovoljene.add(moznaPoteza);
+							break; // Ustavimo, ko prvic ugotovimo, da je poteza mozna.
+							// Kasneje, ko se bo poteza izvedla, se bo se enkrat poracunalo in pa v VSE smeri.
 						}
 					}
 				}
 			}
 		}
-		
-		for (Map.Entry<Poteza, Polje> dvojec : potezeInPolja.entrySet()) {
-			System.out.println((dvojec.getKey().getX() + 1) + "," + (dvojec.getKey().getY() + 1) + ": " + dvojec.getValue());
+
+		for (Poteza mozna : dovoljene) {
+			System.out.println((mozna.vrstica + 1) + ", " + (mozna.stolpec + 1));
 		}
-		return potezeInPolja;
-		
+
+		return dovoljene;
+	}
+	
+	// Še ni dokonèano.
+	
+	public boolean izvediPotezo(Poteza p) {
+		Polje aktivno = aktivniPolja();
+		Polje nasprotno = nasprotniPolja();
+		int i = p.vrstica;
+		int j = p.stolpec;
+		if (plosca[i][j] != Polje.PRAZNO) {
+			return false;
+		}
+		int l = 0;
+		for (int[] smer : tabelaSmeri) { 
+			int k = 0;
+			int x = smer[0];
+			int y = smer[1];
+			while ((0 <= i+x) && (0 <= j+y) && (i+x < N) && (j+y < N) && (plosca[i+x][j+y] == nasprotno)) {
+				k++;
+				l++;
+				x += smer[0];
+				y += smer[1];
+			}
+			if (k > 0 && plosca[i+x][j+y] == aktivnaPolja) {
+				dovoljene.add(moznaPoteza);
+			}
+		}
 	}
 }
+

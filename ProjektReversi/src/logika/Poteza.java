@@ -1,22 +1,11 @@
 package logika;
 
 public class Poteza {
-	private int x;
-	private int y;
+	protected int vrstica;
+	protected int stolpec;
 	
-	public Poteza(int x, int y) {
-		this.x = x;
-		this.y = y;
+	public Poteza(int vr, int st) {
+		this.vrstica = vr;
+		this.stolpec = st;
 	}
-
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
-	}
-	
-	
-	
 }
