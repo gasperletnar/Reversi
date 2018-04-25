@@ -104,32 +104,32 @@ public class Igra {
 
 		return dovoljene;
 	}
-	
+}
 	// Še ni dokonèano.
 	
-	public boolean izvediPotezo(Poteza p) {
-		Polje aktivno = aktivniPolja();
-		Polje nasprotno = nasprotniPolja();
-		int i = p.vrstica;
-		int j = p.stolpec;
-		if (plosca[i][j] != Polje.PRAZNO) {
-			return false;
-		}
-		int l = 0;
-		for (int[] smer : tabelaSmeri) { 
-			int k = 0;
-			int x = smer[0];
-			int y = smer[1];
-			while ((0 <= i+x) && (0 <= j+y) && (i+x < N) && (j+y < N) && (plosca[i+x][j+y] == nasprotno)) {
-				k++;
-				l++;
-				x += smer[0];
-				y += smer[1];
-			}
-			if (k > 0 && plosca[i+x][j+y] == aktivnaPolja) {
-				dovoljene.add(moznaPoteza);
-			}
-		}
-	}
-}
+//	public boolean izvediPotezo(Poteza p) {
+//		Polje aktivno = aktivniPolja();
+//		Polje nasprotno = nasprotniPolja();
+//		int i = p.vrstica;
+//		int j = p.stolpec;
+//		if (plosca[i][j] != Polje.PRAZNO) {
+//			return false;
+//		}
+//		int l = 0;
+//		for (int[] smer : tabelaSmeri) { 
+//			int k = 0;
+//			int x = smer[0];
+//			int y = smer[1];
+//			while ((0 <= i+x) && (0 <= j+y) && (i+x < N) && (j+y < N) && (plosca[i+x][j+y] == nasprotno)) {
+//				k++;
+//				l++;
+//				x += smer[0];
+//				y += smer[1];
+//			}
+////			if (k > 0 && plosca[i+x][j+y] == aktivnaPolja) {
+////				dovoljene.add(moznaPoteza);
+////			}
+//		}
+//	}
+//}
 
