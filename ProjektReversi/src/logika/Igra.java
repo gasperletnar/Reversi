@@ -4,9 +4,12 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import javafx.util.Pair;
+
 public class Igra {
 	private Polje[][] plosca;
 	private Igralec naPotezi;
+	public Stanje stanjeIgre;
 	public static final int N = 8;
 	private static final int[][] tabelaSmeri = {{1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1,1}, {0,1}};
 
@@ -25,8 +28,9 @@ public class Igra {
 		plosca[N/2][N/2] = Polje.BELO__;
 		plosca[N/2-1][N/2] = Polje.CRNO__;
 		plosca[N/2][N/2-1] = Polje.CRNO__;
-
-		naPotezi = Igralec.BELI;
+		
+		stanjeIgre = Stanje.NA_POTEZI_CRNI;
+		naPotezi = Igralec.CRNI;
 	}
 
 	/**
@@ -66,6 +70,49 @@ public class Igra {
 		}
 		return nasprotnaPolja;
 	}
+	
+	/**
+	 * @return Vrne v paru stevilo obarvanih polj za vsakega igralca posebej, zaèenjšèi z
+	 * belim
+	 */
+	
+	public Pair<Integer, Integer> prestejPolja() {
+		int crni = 0;
+		int beli = 0;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (plosca[i][j] == Polje.CRNO__) {
+					crni++;
+				}
+				if (plosca[i][j] == Polje.BELO__) {
+					beli++;
+			    }
+			}
+		}
+		Pair<Integer, Integer> par = new Pair<>(crni, beli);
+		return par;
+	}
+	
+	/**
+	 * Metoda spremeni stanje igre na ustreznega zmagovalca
+	 */
+	
+	public void koncniIzracun() {
+		Pair<Integer, Integer> koncenpar = prestejPolja();
+		int crni = koncenpar.getKey();
+		int beli = koncenpar.getValue();
+		if (crni > beli) {
+			stanjeIgre = Stanje.ZMAGA_CRNI;
+		}
+		else {
+			if(beli > crni) {
+				stanjeIgre = Stanje.ZMAGA_BELI;
+			}
+			else {
+				stanjeIgre = Stanje.NEODLOCENO;
+			}
+		}
+	}
 
 	/**
 	 * @return Seznam moznih potez aktivnega igralca.
@@ -84,7 +131,7 @@ public class Igra {
 						int x = smer[0];
 						int y = smer[1];
 						// Robni pogoji + polje mora biti nasprotno od trenutnega igralca.
-						// Bodi pozoren: x narasca v smeri naracanja j, y v smeri i!
+						// Bodi pozoren: x narasca v smeri narascanja j, y v smeri i!
 						while ((0 <= i+y) && (0 <= j+x) && (i+y < N) && (j+x < N) && (plosca[i+y][j+x] == nasprotno)) {
 							k++;
 							x += smer[0];
@@ -145,7 +192,33 @@ public class Igra {
 		}
 		if (l == 0) return false; // Ce se ni niti eno polje nasprotnikovega igralca spremenilo v polje aktivnega je poteza neveljavna.
 		plosca[i][j] = aktivno; // Nastavimo polje kamor se izvede poteza na polje aktivnega igralca.
-		naPotezi = Igralec.CRNI; // To tukaj za test, izbrisi kasneje.
+		if (naPotezi == Igralec.CRNI) {
+			naPotezi = Igralec.BELI;
+			stanjeIgre = Stanje.NA_POTEZI_BELI;
+			// Reversi ima pravilo, da èe po opravljeni potezi nasprotni igralec nima nobenih
+			// možnih potez, je na vrsti spet aktivni igralec
+			if (seznamDovoljenih().isEmpty() == true) {
+				naPotezi = Igralec.CRNI;
+				stanjeIgre = Stanje.NA_POTEZI_CRNI;
+				// Reversi ima spet pravilo, da èe noben igralec ne more izvesti poteze, se prešteje polja
+				// in se igra zakljuèi, zmaga tisti, ki ima veè polj obarvanih svoje barve
+				if (seznamDovoljenih().isEmpty() == true) {
+					koncniIzracun();
+				}
+			}
+		}
+		// Podoben postopek kot zgoraj je potrebno tudi opraviti, èe je na potezi beli
+		else {
+			naPotezi = Igralec.CRNI;
+			stanjeIgre = Stanje.NA_POTEZI_CRNI;
+			if (seznamDovoljenih().isEmpty() == true) {
+				naPotezi = Igralec.BELI;
+				stanjeIgre = Stanje.NA_POTEZI_BELI;
+				if (seznamDovoljenih().isEmpty() == true) {
+					koncniIzracun();
+				}
+			}
+		}
 		return true;
 	}
 }
