@@ -10,8 +10,6 @@ public class Test {
 		Igra poskus = new Igra();
 		poskus.izvediPotezo(proba);
 		
-		// V metodo izvediPoteza() dodal na koncu naPotezi = Igralec.CRNI; samo za testirati ce deluje.
-		
 		proba = new Poteza(2, 2);
 		poskus.izvediPotezo(proba);
 		proba = new Poteza(2, 3);
@@ -22,5 +20,4 @@ public class Test {
 		System.out.println(poskus.prestejPolja());
 		System.out.println(poskus.stanjeIgre);
 	}
-
 }

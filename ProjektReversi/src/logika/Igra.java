@@ -29,7 +29,6 @@ public class Igra {
 		plosca[N/2-1][N/2] = Polje.CRNO__;
 		plosca[N/2][N/2-1] = Polje.CRNO__;
 		
-		stanjeIgre = Stanje.NA_POTEZI_CRNI;
 		naPotezi = Igralec.CRNI;
 	}
 
@@ -72,8 +71,8 @@ public class Igra {
 	}
 	
 	/**
-	 * @return Vrne v paru stevilo obarvanih polj za vsakega igralca posebej, zaèenjšèi z
-	 * belim
+	 * @return Vrne stevilo polj za vsakega igralca - (stevilo crnih, stevilo belih).
+	 * 
 	 */
 	
 	public Pair<Integer, Integer> prestejPolja() {
@@ -94,7 +93,7 @@ public class Igra {
 	}
 	
 	/**
-	 * Metoda spremeni stanje igre na ustreznega zmagovalca
+	 * Metoda spremeni stanje igre na ustreznega zmagovalca.
 	 */
 	
 	public void koncniIzracun() {
@@ -103,16 +102,18 @@ public class Igra {
 		int beli = koncenpar.getValue();
 		if (crni > beli) {
 			stanjeIgre = Stanje.ZMAGA_CRNI;
-		}
-		else {
-			if(beli > crni) {
-				stanjeIgre = Stanje.ZMAGA_BELI;
-			}
-			else {
-				stanjeIgre = Stanje.NEODLOCENO;
+		} else if (beli > crni) {
+			stanjeIgre = Stanje.ZMAGA_BELI;
+		} else {
+			stanjeIgre = Stanje.NEODLOCENO;
 			}
 		}
-	}
+	
+//	public Stanje stanje() {
+//		if (naPotezi == Igralec.BELI) return Stanje.NA_POTEZI_BELI;
+//		if (naPotezi == Igralec.CRNI) return Stanje.NA_POTEZI_CRNI;
+//		
+//	}
 
 	/**
 	 * @return Seznam moznih potez aktivnega igralca.
@@ -156,9 +157,9 @@ public class Igra {
 	}
 	
 	/**
-	 * Izvede potezo, èe je ta le mozna. Spremeni barvo tistih polj, ki jih doloca poteza.
+	 * Izvede potezo, ce je ta le mozna. Spremeni barvo tistih polj, ki jih doloca poteza.
 	 * @param Poteza
-	 * @return Vrne true, èe se je poteza izvedla, false sicer.
+	 * @return Vrne true, ce se je poteza izvedla, false sicer.
 	 */
 	
 	public boolean izvediPotezo(Poteza p) {
@@ -192,31 +193,12 @@ public class Igra {
 		}
 		if (l == 0) return false; // Ce se ni niti eno polje nasprotnikovega igralca spremenilo v polje aktivnega je poteza neveljavna.
 		plosca[i][j] = aktivno; // Nastavimo polje kamor se izvede poteza na polje aktivnega igralca.
-		if (naPotezi == Igralec.CRNI) {
-			naPotezi = Igralec.BELI;
-			stanjeIgre = Stanje.NA_POTEZI_BELI;
-			// Reversi ima pravilo, da èe po opravljeni potezi nasprotni igralec nima nobenih
-			// možnih potez, je na vrsti spet aktivni igralec
-			if (seznamDovoljenih().isEmpty() == true) {
-				naPotezi = Igralec.CRNI;
-				stanjeIgre = Stanje.NA_POTEZI_CRNI;
-				// Reversi ima spet pravilo, da èe noben igralec ne more izvesti poteze, se prešteje polja
-				// in se igra zakljuèi, zmaga tisti, ki ima veè polj obarvanih svoje barve
-				if (seznamDovoljenih().isEmpty() == true) {
-					koncniIzracun();
-				}
-			}
-		}
-		// Podoben postopek kot zgoraj je potrebno tudi opraviti, èe je na potezi beli
-		else {
-			naPotezi = Igralec.CRNI;
-			stanjeIgre = Stanje.NA_POTEZI_CRNI;
-			if (seznamDovoljenih().isEmpty() == true) {
-				naPotezi = Igralec.BELI;
-				stanjeIgre = Stanje.NA_POTEZI_BELI;
-				if (seznamDovoljenih().isEmpty() == true) {
-					koncniIzracun();
-				}
+		
+		naPotezi = naPotezi.nasprotnik(); // Zamenjamo igralca na potezi.
+		if (seznamDovoljenih().isEmpty() == true) { // V primeri da nasprotnik ne more narediti nobene poteze, se aktivni igralec spet zamenja.
+			naPotezi = naPotezi.nasprotnik();
+			if (seznamDovoljenih().isEmpty() == true) { // Ce tudi on ne more narediti nobene poteze je igre konec.
+				koncniIzracun();
 			}
 		}
 		return true;

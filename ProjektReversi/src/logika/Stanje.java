@@ -6,7 +6,4 @@ public enum Stanje {
 	ZMAGA_CRNI,
 	ZMAGA_BELI,
 	NEODLOCENO;
-	
-	
-
 }
