@@ -9,7 +9,6 @@ import javafx.util.Pair;
 public class Igra {
 	private Polje[][] plosca;
 	private Igralec naPotezi;
-	public Stanje stanjeIgre;
 	public static final int N = 8;
 	private static final int[][] tabelaSmeri = {{1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1,1}, {0,1}};
 
@@ -18,7 +17,7 @@ public class Igra {
 	 */
 
 	public Igra() {
-		plosca = new Polje[N][N];
+		plosca = new Polje[N][N]; // NxN objektov Polje, vrednost null.
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				plosca[i][j] = Polje.PRAZNO;
@@ -93,27 +92,50 @@ public class Igra {
 	}
 	
 	/**
-	 * Metoda spremeni stanje igre na ustreznega zmagovalca.
+	 * @return Vrne stanje ob koncu igre.
 	 */
 	
-	public void koncniIzracun() {
+	public Stanje koncniIzracun() {
 		Pair<Integer, Integer> koncenpar = prestejPolja();
 		int crni = koncenpar.getKey();
 		int beli = koncenpar.getValue();
+		
 		if (crni > beli) {
-			stanjeIgre = Stanje.ZMAGA_CRNI;
+			Stanje stanjeIgre = Stanje.ZMAGA_CRNI;
+			return stanjeIgre;
 		} else if (beli > crni) {
-			stanjeIgre = Stanje.ZMAGA_BELI;
+			Stanje stanjeIgre = Stanje.ZMAGA_BELI;
+			return stanjeIgre;
 		} else {
-			stanjeIgre = Stanje.NEODLOCENO;
+			Stanje stanjeIgre = Stanje.NEODLOCENO;
+			return stanjeIgre;
 			}
 		}
 	
-//	public Stanje stanje() {
-//		if (naPotezi == Igralec.BELI) return Stanje.NA_POTEZI_BELI;
-//		if (naPotezi == Igralec.CRNI) return Stanje.NA_POTEZI_CRNI;
-//		
-//	}
+	
+	/**
+	 * Fja pove trenutno stanje igre. Ce aktivni igralec nima moznosti izvesti nobene poteze, zamenja aktivnega igralca.
+	 * @return Stanje igre.
+	 */
+	
+	public Stanje stanje() {
+		if (seznamDovoljenih().isEmpty() == true) { // V primeri da aktivni igralec nima moznosti narediti nobene poteze, je na potezi nasprotni igralec.
+			naPotezi = naPotezi.nasprotnik();
+			if (seznamDovoljenih().isEmpty() == true) { // Ce tudi on ne more narediti nobene poteze, je igre konec.
+				return koncniIzracun();
+			}
+		}
+		if (naPotezi == Igralec.BELI) {
+			Stanje stanjeIgre = Stanje.NA_POTEZI_BELI;
+			return stanjeIgre;
+		} else { // Vedno velja: ce ni na potezi beli, je na potezi crni, ker ima enum Igralec dva stevca: BELI, CRNI.
+			
+			// Morda bi moral biti tu se kak test?
+			
+			Stanje stanjeIgre = Stanje.NA_POTEZI_CRNI;
+			return stanjeIgre;
+		}
+	}
 
 	/**
 	 * @return Seznam moznih potez aktivnega igralca.
@@ -191,16 +213,10 @@ public class Igra {
 				}
 			}
 		}
+		
 		if (l == 0) return false; // Ce se ni niti eno polje nasprotnikovega igralca spremenilo v polje aktivnega je poteza neveljavna.
 		plosca[i][j] = aktivno; // Nastavimo polje kamor se izvede poteza na polje aktivnega igralca.
-		
 		naPotezi = naPotezi.nasprotnik(); // Zamenjamo igralca na potezi.
-		if (seznamDovoljenih().isEmpty() == true) { // V primeri da nasprotnik ne more narediti nobene poteze, se aktivni igralec spet zamenja.
-			naPotezi = naPotezi.nasprotnik();
-			if (seznamDovoljenih().isEmpty() == true) { // Ce tudi on ne more narediti nobene poteze je igre konec.
-				koncniIzracun();
-			}
-		}
 		return true;
 	}
 }

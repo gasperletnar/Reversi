@@ -18,6 +18,5 @@ public class Test {
 		poskus.izpis();
 		poskus.koncniIzracun();
 		System.out.println(poskus.prestejPolja());
-		System.out.println(poskus.stanjeIgre);
 	}
 }
