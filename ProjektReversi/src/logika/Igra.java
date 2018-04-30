@@ -161,7 +161,7 @@ public class Igra {
 							y += smer[1];
 						}
 						// Vsaj eno polje nasprotnega igralca + naslednje polje takoj za linijo nasprotnikovih mora biti od igralca na potezi.
-						if (k > 0 && plosca[i+y][j+x] == aktivno) {
+						if (k > 0 && (0 <= i+y) && (0 <= j+x) && (i+y < N) && (j+x < N) &&  plosca[i+y][j+x] == aktivno) {
 							dovoljene.add(moznaPoteza);
 							break; // Ustavimo, ko prvic ugotovimo, da je poteza mozna.
 							// Kasneje, ko se bo poteza izvedla, se bo se enkrat poracunalo in pa v VSE smeri.

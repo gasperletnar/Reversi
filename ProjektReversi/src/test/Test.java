@@ -6,7 +6,23 @@ import logika.Poteza;
 public class Test {
 
 	public static void main(String[] args) {
-		Poteza proba = new Poteza(3, 2);
+		
+		Igra poskus2 = new Igra();
+		poskus2.izpis();
+		System.out.println();
+		System.out.println(poskus2.stanje());
+		Poteza proba2 = new Poteza(2, 3);
+		poskus2.izvediPotezo(proba2);
+		poskus2.izpis();
+		System.out.println(poskus2.stanje());
+		
+		
+		
+		
+		
+		
+		
+		/*Poteza proba = new Poteza(3, 2);
 		Igra poskus = new Igra();
 		poskus.izvediPotezo(proba);
 		
@@ -17,6 +33,6 @@ public class Test {
 		poskus.seznamDovoljenih();
 		poskus.izpis();
 		poskus.koncniIzracun();
-		System.out.println(poskus.prestejPolja());
+		System.out.println(poskus.prestejPolja());*/
 	}
 }
