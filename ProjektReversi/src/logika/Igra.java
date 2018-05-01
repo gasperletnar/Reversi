@@ -1,6 +1,5 @@
 package logika;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,16 +16,16 @@ public class Igra {
 	 */
 
 	public Igra() {
-		plosca = new Polje[N][N]; // NxN objektov Polje, vrednost null.
+		plosca = new Polje[N][N]; // Nova matrika NxN, elementi so tipa Polje, ni se doloceno katero izmed vrednosti konstant bodo zavzeli.
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				plosca[i][j] = Polje.PRAZNO;
 			}
 		}
-		plosca[N/2-1][N/2-1] = Polje.BELO__;
-		plosca[N/2][N/2] = Polje.BELO__;
-		plosca[N/2-1][N/2] = Polje.CRNO__;
-		plosca[N/2][N/2-1] = Polje.CRNO__;
+		plosca[N/2-1][N/2-1] = Polje.BELO;
+		plosca[N/2][N/2] = Polje.BELO;
+		plosca[N/2-1][N/2] = Polje.CRNO;
+		plosca[N/2][N/2-1] = Polje.CRNO;
 		
 		naPotezi = Igralec.CRNI;
 	}
@@ -37,36 +36,19 @@ public class Igra {
 
 	public void izpis() {
 		for (int i = 0; i < N; i++) {
-			System.out.println(Arrays.deepToString(plosca[i]));
+			System.out.print("[");
+			for (int j = 0; j < N; j++) {
+				if (plosca[i][j] == Polje.CRNO) {
+					System.out.print(" Crno ");
+				} else if (plosca[i][j] == Polje.BELO) {
+					System.out.print(" Belo ");
+			    } else {
+			    	System.out.print("Prazno");
+			    }
+				if (j<N-1) System.out.print(" - ");
+			}
+			System.out.println("]");
 		}
-	}
-
-	/**
-	 * @return Vrne polje z barvo enako kot je barva aktivnega igralca.
-	 */
-	
-	public Polje aktivniPolja() {
-		Polje aktivnaPolja = Polje.PRAZNO;
-		if (naPotezi == Igralec.BELI) {
-			aktivnaPolja = Polje.BELO__;
-		} else {
-			aktivnaPolja = Polje.CRNO__;
-		}
-		return aktivnaPolja;
-	}
-
-	/**
-	 * @return Vrne polje z barvo nasprotno od aktivnega igralca.
-	 */
-	
-	public Polje nasprotniPolja() {
-		Polje nasprotnaPolja = Polje.PRAZNO;
-		if (naPotezi == Igralec.BELI) {
-			nasprotnaPolja = Polje.CRNO__;
-		} else {
-			nasprotnaPolja = Polje.BELO__;
-		}
-		return nasprotnaPolja;
 	}
 	
 	/**
@@ -79,10 +61,10 @@ public class Igra {
 		int beli = 0;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
-				if (plosca[i][j] == Polje.CRNO__) {
+				if (plosca[i][j] == Polje.CRNO) {
 					crni++;
 				}
-				if (plosca[i][j] == Polje.BELO__) {
+				if (plosca[i][j] == Polje.BELO) {
 					beli++;
 			    }
 			}
@@ -114,7 +96,7 @@ public class Igra {
 	
 	
 	/**
-	 * Fja pove trenutno stanje igre. Ce aktivni igralec nima moznosti izvesti nobene poteze, zamenja aktivnega igralca.
+	 * Ce aktivni igralec nima moznosti izvesti nobene poteze, zamenja aktivnega igralca.
 	 * @return Stanje igre.
 	 */
 	
@@ -129,9 +111,6 @@ public class Igra {
 			Stanje stanjeIgre = Stanje.NA_POTEZI_BELI;
 			return stanjeIgre;
 		} else { // Vedno velja: ce ni na potezi beli, je na potezi crni, ker ima enum Igralec dva stevca: BELI, CRNI.
-			
-			// Morda bi moral biti tu se kak test?
-			
 			Stanje stanjeIgre = Stanje.NA_POTEZI_CRNI;
 			return stanjeIgre;
 		}
@@ -143,8 +122,8 @@ public class Igra {
 
 	public List<Poteza> seznamDovoljenih() {
 		LinkedList<Poteza>  dovoljene = new LinkedList<Poteza>();	
-		Polje aktivno = aktivniPolja(); // Doloci polje aktivnega igralca.
-		Polje nasprotno = nasprotniPolja();	
+		Polje aktivno = naPotezi.dobiPolje(); // Doloci polje aktivnega igralca.
+		Polje nasprotno = naPotezi.nasprotnik().dobiPolje();
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				if (plosca[i][j] == Polje.PRAZNO) { // Lega praznega polja na plosci nam da koordinate mozne poteze. Potrebno pa je se preveriti, da izpolnjuje vse pogoje.
@@ -174,7 +153,7 @@ public class Igra {
 		for (Poteza mozna : dovoljene) {
 			System.out.println((mozna.vrstica + 1) + ", " + (mozna.stolpec + 1));
 		}
-
+		
 		return dovoljene;
 	}
 	
@@ -191,8 +170,8 @@ public class Igra {
 			return false;
 		}
 		
-		Polje aktivno = aktivniPolja(); // Doloci polje aktivnega igralca.
-		Polje nasprotno = nasprotniPolja();
+		Polje aktivno = naPotezi.dobiPolje(); // Doloci polje aktivnega igralca.
+		Polje nasprotno = naPotezi.nasprotnik().dobiPolje();
 		int l = 0; // Belezi koliko vseh skupaj nasprotnikovih polj se zamenja v polja aktivnega igralca.
 		for (int[] smer : tabelaSmeri) { 
 			int k = 0;
