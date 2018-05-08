@@ -8,10 +8,8 @@ public class Poskusi {
 	public static void main(String[] args) {
 		Igra igra = new Igra();
 		System.out.println(igra.stanje());
-		System.out.println(igra.seznamDovoljenih());
 		Igra poskus2 = new Igra();
 		poskus2.izpis();
-		System.out.println();
 		System.out.println(poskus2.stanje());
 		Poteza proba2 = new Poteza(2, 3);
 		poskus2.izvediPotezo(proba2);

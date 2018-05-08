@@ -53,7 +53,6 @@ public class Igra {
 	
 	/**
 	 * @return Vrne stevilo polj za vsakega igralca - (stevilo crnih, stevilo belih).
-	 * 
 	 */
 	
 	public Pair<Integer, Integer> prestejPolja() {
@@ -101,7 +100,7 @@ public class Igra {
 	 */
 	
 	public Stanje stanje() {
-		if (seznamDovoljenih().isEmpty() == true) { // V primeri da aktivni igralec nima moznosti narediti nobene poteze, je na potezi nasprotni igralec.
+		if (seznamDovoljenih().isEmpty() == true) { // V primeru da aktivni igralec nima moznosti narediti nobene poteze, je na potezi nasprotni igralec.
 			naPotezi = naPotezi.nasprotnik();
 			if (seznamDovoljenih().isEmpty() == true) { // Ce tudi on ne more narediti nobene poteze, je igre konec.
 				return koncniIzracun();
@@ -111,6 +110,7 @@ public class Igra {
 			Stanje stanjeIgre = Stanje.NA_POTEZI_BELI;
 			return stanjeIgre;
 		} else { // Vedno velja: ce ni na potezi beli, je na potezi crni, ker ima enum Igralec dva stevca: BELI, CRNI.
+			assert(naPotezi == Igralec.CRNI);
 			Stanje stanjeIgre = Stanje.NA_POTEZI_CRNI;
 			return stanjeIgre;
 		}
@@ -149,12 +149,18 @@ public class Igra {
 				}
 			}
 		}
-
-		for (Poteza mozna : dovoljene) {
+		return dovoljene;
+	}
+	
+	/**
+	 * Izpise dovoljene poteze aktivnega igralca.
+	 */
+	
+	public void izpisDovoljenih() {
+		List<Poteza> s = seznamDovoljenih();
+		for (Poteza mozna : s) {
 			System.out.println((mozna.vrstica + 1) + ", " + (mozna.stolpec + 1));
 		}
-		
-		return dovoljene;
 	}
 	
 	/**
@@ -183,7 +189,7 @@ public class Igra {
 				y += smer[1];
 			}
 			if (k > 0 && plosca[i+y][j+x] == aktivno) {
-				l += k;
+				l++;
 				while (k > 0) { // V obratnem vrstnem redu spreminjamo polja nasprotnikovega igralca v polja aktivnega igralca.
 					k--;
 					x -= smer[0];
