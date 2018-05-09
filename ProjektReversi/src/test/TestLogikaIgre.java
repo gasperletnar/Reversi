@@ -20,9 +20,16 @@ public class TestLogikaIgre extends TestCase {
 		assertEquals(Stanje.NA_POTEZI_BELI, igra.stanje());
 		assertTrue(3 == igra.seznamDovoljenih().size());
 		
+		// Zanka v kateri se vedno izvede prva mozna poteza na seznamu dovoljenih za aktivnega igralca.
+		while (igra.stanje() == Stanje.NA_POTEZI_BELI || igra.stanje() == Stanje.NA_POTEZI_CRNI) {
+			igra.izvediPotezo(igra.seznamDovoljenih().get(0));
+
+		}
 		
-		// Ce je stanje igre v enem izmed koncnih stanje, aktivni igralec nima nobene mozne poteze.
+		// Ce je stanje igre v enem izmed koncnih stanje, aktivni igralec ne sme imeti nobene mozne poteze.
 		if (igra.stanje() == Stanje.NEODLOCENO || igra.stanje() == Stanje.ZMAGA_BELI || igra.stanje() == Stanje.ZMAGA_CRNI) {
+			igra.izpisDovoljenih();
+			igra.izpis();
 			assertTrue(igra.seznamDovoljenih().isEmpty());
 		}
 		

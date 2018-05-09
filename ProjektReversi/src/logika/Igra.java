@@ -36,18 +36,18 @@ public class Igra {
 
 	public void izpis() {
 		for (int i = 0; i < N; i++) {
-			System.out.print("[");
+			System.out.print("|");
 			for (int j = 0; j < N; j++) {
 				if (plosca[i][j] == Polje.CRNO) {
-					System.out.print(" Crno ");
+					System.out.print("\u25CF");
 				} else if (plosca[i][j] == Polje.BELO) {
-					System.out.print(" Belo ");
+					System.out.print("\u25CB");
 			    } else {
-			    	System.out.print("Prazno");
+			    	System.out.print(" ");
 			    }
-				if (j<N-1) System.out.print(" - ");
+				if (j<N-1) System.out.print("  ");
 			}
-			System.out.println("]");
+			System.out.println("|");
 		}
 	}
 	
@@ -93,26 +93,20 @@ public class Igra {
 			}
 		}
 	
-	
 	/**
 	 * Ce aktivni igralec nima moznosti izvesti nobene poteze, zamenja aktivnega igralca.
 	 * @return Stanje igre.
 	 */
 	
 	public Stanje stanje() {
-		if (seznamDovoljenih().isEmpty() == true) { // V primeru da aktivni igralec nima moznosti narediti nobene poteze, je na potezi nasprotni igralec.
-			naPotezi = naPotezi.nasprotnik();
-			if (seznamDovoljenih().isEmpty() == true) { // Ce tudi on ne more narediti nobene poteze, je igre konec.
-				return koncniIzracun();
-			}
-		}
 		if (naPotezi == Igralec.BELI) {
 			Stanje stanjeIgre = Stanje.NA_POTEZI_BELI;
 			return stanjeIgre;
-		} else { // Vedno velja: ce ni na potezi beli, je na potezi crni, ker ima enum Igralec dva stevca: BELI, CRNI.
-			assert(naPotezi == Igralec.CRNI);
+		} else if (naPotezi == Igralec.CRNI){
 			Stanje stanjeIgre = Stanje.NA_POTEZI_CRNI;
 			return stanjeIgre;
+		} else {
+			return koncniIzracun();
 		}
 	}
 
@@ -121,7 +115,13 @@ public class Igra {
 	 */
 
 	public List<Poteza> seznamDovoljenih() {
-		LinkedList<Poteza>  dovoljene = new LinkedList<Poteza>();	
+		LinkedList<Poteza>  dovoljene = new LinkedList<Poteza>();
+		
+		// V primeru, da ni aktivnega igralca funkcija vrne prazen seznam.
+		if (naPotezi == null) {
+			return List.of();
+		}
+		
 		Polje aktivno = naPotezi.dobiPolje(); // Doloci polje aktivnega igralca.
 		Polje nasprotno = naPotezi.nasprotnik().dobiPolje();
 		for (int i = 0; i < N; i++) {
@@ -157,9 +157,13 @@ public class Igra {
 	 */
 	
 	public void izpisDovoljenih() {
-		List<Poteza> s = seznamDovoljenih();
-		for (Poteza mozna : s) {
-			System.out.println((mozna.vrstica + 1) + ", " + (mozna.stolpec + 1));
+		if (seznamDovoljenih().isEmpty()) {
+			System.out.println("Nobena poteza ni vec mozna.");
+		} else {
+			List<Poteza> s = seznamDovoljenih();
+			for (Poteza mozna : s) {
+				System.out.println((mozna.vrstica + 1) + ", " + (mozna.stolpec + 1));
+			}
 		}
 	}
 	
@@ -178,7 +182,7 @@ public class Igra {
 		
 		Polje aktivno = naPotezi.dobiPolje(); // Doloci polje aktivnega igralca.
 		Polje nasprotno = naPotezi.nasprotnik().dobiPolje();
-		int l = 0; // Belezi koliko vseh skupaj nasprotnikovih polj se zamenja v polja aktivnega igralca.
+		int l = 0; // Belezi v koliko razlicnih smeri, iz polja kamor naj bi se izvedla poteza, spremenimo nasprotnikova polja v nasa.
 		for (int[] smer : tabelaSmeri) { 
 			int k = 0;
 			int x = smer[0];
@@ -188,7 +192,8 @@ public class Igra {
 				x += smer[0];
 				y += smer[1];
 			}
-			if (k > 0 && plosca[i+y][j+x] == aktivno) {
+			// Pazi, vedno potrebni tudi robni pogoji se za polje aktivnega igralca, sicer lahko uidemo ven iz plosce.
+			if (k > 0 && (0 <= i+y) && (0 <= j+x) && (i+y < N) && (j+x < N) &&  plosca[i+y][j+x] == aktivno) {
 				l++;
 				while (k > 0) { // V obratnem vrstnem redu spreminjamo polja nasprotnikovega igralca v polja aktivnega igralca.
 					k--;
@@ -201,8 +206,17 @@ public class Igra {
 		
 		if (l == 0) return false; // Ce se ni niti eno polje nasprotnikovega igralca spremenilo v polje aktivnega je poteza neveljavna.
 		plosca[i][j] = aktivno; // Nastavimo polje kamor se izvede poteza na polje aktivnega igralca.
-		naPotezi = naPotezi.nasprotnik(); // Zamenjamo igralca na potezi.
+		
+		naPotezi = naPotezi.nasprotnik();
+		if (seznamDovoljenih().isEmpty()) { // V primeru da nasprotni igralec nima moznosti narediti nobene poteze, je na potezi se enkrat aktivni igralec.
+			naPotezi = naPotezi.nasprotnik();
+			if (seznamDovoljenih().isEmpty()) { // Ce tudi on ne more narediti nobene poteze, je igre konec.
+				naPotezi = null;
+			}
+		}
+		
 		return true;
 	}
+	
 }
 
