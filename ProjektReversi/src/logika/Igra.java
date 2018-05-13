@@ -1,5 +1,6 @@
 package logika;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,6 +29,17 @@ public class Igra {
 		plosca[N/2][N/2-1] = Polje.CRNO;
 		
 		naPotezi = Igralec.CRNI;
+	}
+	
+	public Igra(Igra igra) {
+		plosca = new Polje[N][N];
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				plosca[i][j] = igra.plosca[i][j];
+			}
+		}
+		
+		naPotezi = igra.naPotezi;
 	}
 
 	/**
@@ -119,7 +131,7 @@ public class Igra {
 		
 		// V primeru, da ni aktivnega igralca funkcija vrne prazen seznam.
 		if (naPotezi == null) {
-			return List.of();
+			return Collections.emptyList();
 		}
 		
 		Polje aktivno = naPotezi.dobiPolje(); // Doloci polje aktivnega igralca.
