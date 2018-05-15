@@ -8,4 +8,12 @@ public class Poteza {
 		this.vrstica = vr;
 		this.stolpec = st;
 	}
+	
+	public int getVrstica() {
+		return vrstica;
+	}
+
+	public int getStolpec() {
+		return stolpec;
+	}
 }

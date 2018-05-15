@@ -8,5 +8,7 @@ public class Reversi {
 		GlavnoOkno okno = new GlavnoOkno();
 		okno.pack();
 		okno.setVisible(true);
+		
+		
 	}
 }

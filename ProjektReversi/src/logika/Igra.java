@@ -41,6 +41,10 @@ public class Igra {
 		
 		naPotezi = igra.naPotezi;
 	}
+	
+	public Polje[][] getPlosca(){
+		return this.plosca;
+	}
 
 	/**
 	 * Izpise tabelo polj.
