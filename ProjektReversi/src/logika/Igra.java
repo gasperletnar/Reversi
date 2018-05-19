@@ -15,7 +15,6 @@ public class Igra {
 	/**
 	 * Ustvari igralno plosco; vsa polja prazna, razen sredinska 4.
 	 */
-
 	public Igra() {
 		plosca = new Polje[N][N]; // Nova matrika NxN, elementi so tipa Polje, ni se doloceno katero izmed vrednosti konstant bodo zavzeli.
 		for (int i = 0; i < N; i++) {
@@ -27,10 +26,13 @@ public class Igra {
 		plosca[N/2][N/2] = Polje.BELO;
 		plosca[N/2-1][N/2] = Polje.CRNO;
 		plosca[N/2][N/2-1] = Polje.CRNO;
-		
 		naPotezi = Igralec.CRNI;
 	}
 	
+	/**
+	 * Prekopiramo podatke iz igre podane v argumentu.
+	 * @param igra
+	 */
 	public Igra(Igra igra) {
 		plosca = new Polje[N][N];
 		for (int i = 0; i < N; i++) {
@@ -38,10 +40,12 @@ public class Igra {
 				plosca[i][j] = igra.plosca[i][j];
 			}
 		}
-		
 		naPotezi = igra.naPotezi;
 	}
 	
+	/**
+	 * @return Plosca igre.
+	 */
 	public Polje[][] getPlosca(){
 		return this.plosca;
 	}
@@ -49,7 +53,6 @@ public class Igra {
 	/**
 	 * Izpise tabelo polj.
 	 */
-
 	public void izpis() {
 		for (int i = 0; i < N; i++) {
 			System.out.print("|");
@@ -70,7 +73,6 @@ public class Igra {
 	/**
 	 * @return Vrne stevilo polj za vsakega igralca - (stevilo crnih, stevilo belih).
 	 */
-	
 	public Pair<Integer, Integer> prestejPolja() {
 		int crni = 0;
 		int beli = 0;
@@ -91,7 +93,6 @@ public class Igra {
 	/**
 	 * @return Vrne stanje ob koncu igre.
 	 */
-	
 	public Stanje koncniIzracun() {
 		Pair<Integer, Integer> koncenpar = prestejPolja();
 		int crni = koncenpar.getKey();
@@ -113,7 +114,6 @@ public class Igra {
 	 * Ce aktivni igralec nima moznosti izvesti nobene poteze, zamenja aktivnega igralca.
 	 * @return Stanje igre.
 	 */
-	
 	public Stanje stanje() {
 		if (naPotezi == Igralec.BELI) {
 			Stanje stanjeIgre = Stanje.NA_POTEZI_BELI;
@@ -129,7 +129,6 @@ public class Igra {
 	/**
 	 * @return Seznam moznih potez aktivnega igralca.
 	 */
-
 	public List<Poteza> seznamDovoljenih() {
 		LinkedList<Poteza>  dovoljene = new LinkedList<Poteza>();
 		
@@ -171,7 +170,6 @@ public class Igra {
 	/**
 	 * Izpise dovoljene poteze aktivnega igralca.
 	 */
-	
 	public void izpisDovoljenih() {
 		if (seznamDovoljenih().isEmpty()) {
 			System.out.println("Nobena poteza ni vec mozna.");
@@ -188,7 +186,6 @@ public class Igra {
 	 * @param Poteza
 	 * @return Vrne true, ce se je poteza izvedla, false sicer.
 	 */
-	
 	public boolean izvediPotezo(Poteza p) {
 		int i = p.vrstica;
 		int j = p.stolpec;
@@ -233,6 +230,4 @@ public class Igra {
 		
 		return true;
 	}
-	
 }
-
