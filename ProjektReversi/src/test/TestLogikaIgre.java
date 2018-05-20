@@ -15,7 +15,7 @@ public class TestLogikaIgre extends TestCase {
 		assertEquals(stPolj.getKey(), stPolj.getValue());
 		assertTrue(2 == stPolj.getKey());
 		
-		// Ko prvi igralec(crni) naredi potezo, mora biti tedaj na potezi beli, imeti mora na voljo 3 poteze, ker so vse 4 poteze crnega simetricne.
+		// Ko prvi igralec(crni) naredi potezo, mora biti tedaj na potezi beli, imeti mora na voljo 3 poteze, saj so vse 4 poteze crnega simetricne.
 		igra.izvediPotezo(igra.seznamDovoljenih().get(0));
 		assertEquals(Stanje.NA_POTEZI_BELI, igra.stanje());
 		assertTrue(3 == igra.seznamDovoljenih().size());
@@ -25,7 +25,6 @@ public class TestLogikaIgre extends TestCase {
 			igra.izvediPotezo(igra.seznamDovoljenih().get(0));
 
 		}
-		
 		// Ce je stanje igre v enem izmed koncnih stanje, aktivni igralec ne sme imeti nobene mozne poteze.
 		if (igra.stanje() == Stanje.NEODLOCENO || igra.stanje() == Stanje.ZMAGA_BELI || igra.stanje() == Stanje.ZMAGA_CRNI) {
 			igra.izpisDovoljenih();

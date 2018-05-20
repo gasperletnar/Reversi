@@ -58,11 +58,11 @@ public class Igra {
 			System.out.print("|");
 			for (int j = 0; j < N; j++) {
 				if (plosca[i][j] == Polje.CRNO) {
-					System.out.print("\u25CF");
+					System.out.print("B");
 				} else if (plosca[i][j] == Polje.BELO) {
-					System.out.print("\u25CB");
+					System.out.print("C");
 			    } else {
-			    	System.out.print(" ");
+			    	System.out.print(".");
 			    }
 				if (j<N-1) System.out.print("  ");
 			}
@@ -97,7 +97,6 @@ public class Igra {
 		Pair<Integer, Integer> koncenpar = prestejPolja();
 		int crni = koncenpar.getKey();
 		int beli = koncenpar.getValue();
-		
 		if (crni > beli) {
 			Stanje stanjeIgre = Stanje.ZMAGA_CRNI;
 			return stanjeIgre;
@@ -111,7 +110,6 @@ public class Igra {
 		}
 	
 	/**
-	 * Ce aktivni igralec nima moznosti izvesti nobene poteze, zamenja aktivnega igralca.
 	 * @return Stanje igre.
 	 */
 	public Stanje stanje() {

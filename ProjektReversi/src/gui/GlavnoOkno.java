@@ -14,8 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.SwingConstants;
-
 import logika.Igra;
 import logika.Polje;
 import logika.Poteza;
@@ -29,7 +27,7 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	private Platno platno;
 	
 	/**
-	 * Logika igre, null ce se igra trenutno ne igra.
+	 * Logika igre; null ce se igra trenutno ne igra.
 	 */
 	private Igra igra;
 	
@@ -53,7 +51,7 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	 */
 	private Strateg strategB;
 	
-	private JMenuItem nova_igra_IvsI;
+	private JMenuItem nova_igra_IvsI; // JMenuItemi v atributih, da kasneje lahko dolocimo akcijo, ki naj se izvede ob kliku na dolocen gumb.
 	private JMenuItem izhod;
 	
 	public GlavnoOkno(){
@@ -85,7 +83,7 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		getContentPane().add(platno, polje_layout);
 		
 		// Prostor pod plosco, kjer bo izpisano stanje igre.
-		status = new JLabel("status", SwingConstants.LEFT);
+		status = new JLabel();
 		status.setFont(new Font(status.getFont().getName(), status.getFont().getStyle(), 20)); // Nastavimo ime fonta, stil in velikost.
 		GridBagConstraints status_layout = new GridBagConstraints();
 		status_layout.gridx = 0;
@@ -106,14 +104,14 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	}
 	
 	/**
-	 * @return Plosca aktivne igre; null igre ni.
+	 * @return Plosca aktivne igre; null ce igre ni.
 	 */
 	public Polje[][] getPlosca(){
 		return (igra == null ? null : igra.getPlosca());
 	}
 
 	/**
-	 * Zažene novo igro.
+	 * Zazene novo igro.
 	 */
 	public void nova_igra() {
 		if (strategC != null) {strategC.prekini(); } // Da strateg od prejsnje igre ne naredi poteze v novi igri.
@@ -123,7 +121,6 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		strategB = new Clovek(this);
 		osveziGui();
 		repaint();
-		
 	}
 	
 	/**
@@ -200,7 +197,7 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	/**
 	 * @return Kopija trenune igre. 
 	 */
-	public Igra copyIgra() {
+	public Igra copyIgra() { // Namenjeno racunalniku.
 		return new Igra(igra);
 	}
 }

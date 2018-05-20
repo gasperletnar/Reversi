@@ -3,6 +3,10 @@ package test;
 import logika.Igra;
 import logika.Poteza;
 
+/**
+ * @author Gasper
+ * Razred namenjen posameznim poskusom znotraj LogikeIgre.
+ */
 public class Poskusi {
 
 	public static void main(String[] args) {

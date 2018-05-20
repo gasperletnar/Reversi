@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -16,13 +17,18 @@ import logika.Polje;
 import logika.Poteza;
 
 @SuppressWarnings("serial")
-public class Platno extends JPanel implements MouseListener {
+public class Platno extends JPanel implements MouseListener, MouseMotionListener {
 	private GlavnoOkno master;
+	
+	/**
+	 * Dovoljena poteza na katero kazemo z misko; default null.
+	 */
+	private Poteza oznacena;
 	
 	/**
 	 * Relativna sirina crte.
 	 */
-	private final static double LINE_WIDTH = 0.05; // Relativna sirina crt.
+	private final static double LINE_WIDTH = 0.05;
 	
 	/**
 	 * Relativni prostor med plosckom in robom kvadrata.
@@ -33,6 +39,7 @@ public class Platno extends JPanel implements MouseListener {
 		super();
 		this.master = master;
 		addMouseListener(this);
+		addMouseMotionListener(this);
 	}
 	
 	/**
@@ -64,24 +71,26 @@ public class Platno extends JPanel implements MouseListener {
 		double y = s * (j + 0.5 * LINE_WIDTH + PADDING);
 		g2.setColor(bIgralca);
 		g2.setStroke(new BasicStroke((float) (s * LINE_WIDTH)));
-		g2.drawOval((int)x, (int)y, (int)r, (int)r);
-		g2.fillOval((int)x, (int)y, (int)r, (int)r);
+		g2.fillOval((int)x+1, (int)y+1, (int)r, (int)r);  // Odstopanje za 1 pixel, zato + 1.
+		g2.setColor(Color.DARK_GRAY); // Obroba plosckov.
+		g2.setStroke(new BasicStroke(2));
+		g2.drawOval((int)x+1, (int)y+1, (int)r, (int)r);
 	}
 	
 	/**
-	 * Na polje narise okvir kvadrata - za oznacitev dovoljenih polj.
+	 * Na polje narise manjsi kvadrat - za oznacitev dovoljenih polj.
 	 * @param g2
 	 * @param i
 	 * @param j
 	 */
-	private void paintPossible(Graphics2D g2, int i, int j) {
+	private void paintPossible(Graphics2D g2, int i, int j, Color b) {
 		double s = stKvadrata();
 		double r = s * (1.0 - LINE_WIDTH - 2.0 * PADDING);
 		double x = s * (i + 0.5 * LINE_WIDTH + PADDING);
 		double y = s * (j + 0.5 * LINE_WIDTH + PADDING);
-		g2.setColor(Color.red);
+		g2.setColor(b);
 		g2.setStroke(new BasicStroke((float) (s * LINE_WIDTH / 2)));
-		g2.drawRect((int)x, (int)y, (int)r, (int)r);
+		g2.fillRect((int)x+1, (int)y+1, (int)r, (int)r);
 	}
 	
 	@Override
@@ -89,10 +98,10 @@ public class Platno extends JPanel implements MouseListener {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g; // Povemo javi da je g razreda Graphics2D - vec metod.
 		double s = stKvadrata();
-		g2.setColor(Color.GREEN);
-		g2.fillRect(0, 0, (int)(Igra.N*s), (int)(Igra.N*s)); // Pobarvamo polje zeleno.
+		g2.setColor(new Color(34,139,34));
+		g2.fillRect(0, 0, (int)(Igra.N*s), (int)(Igra.N*s)); // Pobarvamo plosco zeleno.
 		g2.setColor(Color.BLACK);
-		g2.setStroke(new BasicStroke((float) (s * LINE_WIDTH))); // Debelina crte za risanje, prilagaja se velikosti platna. s * LINE_WIDTH
+		g2.setStroke(new BasicStroke((float) (s * LINE_WIDTH))); // Debelina crte za risanje, prilagaja se velikosti platna.
 		for (int i = 0; i < Igra.N + 1; i++) {
 			// Navpicne crte. Narisali bomo N+2 crt, 2 dodatni za rob.
 			g2.drawLine((int)(i*s), // Vsakic i pomnozimo z s(stranico kvadrata) - ko i naraste za 1, se premaknemo za eno stranico naprej.
@@ -118,11 +127,18 @@ public class Platno extends JPanel implements MouseListener {
 				
 			}
 		}
+		Color a = new Color(0, 100, 0);
+		Color b = new Color(50, 205, 50);
 		List<Poteza> dovoljene = master.seznamDovoljenih();
-		for(Poteza a: dovoljene) { // Za vsako povezo v seznamu dovoljenih, narisemo rdec kvadratek na polje na platnu.
-			int potezaX = a.getStolpec();
-			int potezaY = a.getVrstica();
-			paintPossible(g2, potezaY, potezaX);
+		for(Poteza p: dovoljene) { // Za vsako potezo v seznamu dovoljenih, narisemo kvadratek ki oznacuje, da se na polje lahko izvede potezo.
+			int potezaX = p.getStolpec();
+			int potezaY = p.getVrstica();
+			// Ce je trenutna oznacena beseda v seznam dovoljenih, to polje obarva drugace.
+			if (oznacena != null && p.getStolpec() == oznacena.getStolpec() && p.getVrstica() == oznacena.getVrstica()) {
+				paintPossible(g2, potezaY, potezaX, a);
+			} else {
+				paintPossible(g2, potezaY, potezaX, b);
+			}
 		}
 	}
 	
@@ -133,7 +149,6 @@ public class Platno extends JPanel implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -159,12 +174,33 @@ public class Platno extends JPanel implements MouseListener {
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		oznacena = null;
+		int x = e.getX();
+		int y = e.getY();
+		int w = (int)stKvadrata();
+		int i = x / w;
+		int j = y / w;
+		List<Poteza> dovoljene = master.seznamDovoljenih();
+		for (Poteza d : dovoljene) { // Ce je mozno izvesti potezo v polje na trenutni polozaj miske, nastavi to potezo za oznaceno.
+			if (d.getStolpec() == j && d.getVrstica() == i) {
+				oznacena = d;
+			}
+		}
+		repaint();		
 	}
 }
