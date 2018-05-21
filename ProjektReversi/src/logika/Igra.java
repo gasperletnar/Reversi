@@ -49,6 +49,13 @@ public class Igra {
 	public Polje[][] getPlosca(){
 		return this.plosca;
 	}
+	
+	/**
+	 * @return Igralec na potezi.
+	 */
+	public Igralec naPotezi() {
+		return naPotezi;
+	}
 
 	/**
 	 * Izpise tabelo polj.

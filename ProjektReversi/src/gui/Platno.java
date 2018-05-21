@@ -130,14 +130,16 @@ public class Platno extends JPanel implements MouseListener, MouseMotionListener
 		Color a = new Color(0, 100, 0);
 		Color b = new Color(50, 205, 50);
 		List<Poteza> dovoljene = master.seznamDovoljenih();
-		for(Poteza p: dovoljene) { // Za vsako potezo v seznamu dovoljenih, narisemo kvadratek ki oznacuje, da se na polje lahko izvede potezo.
-			int potezaX = p.getStolpec();
-			int potezaY = p.getVrstica();
-			// Ce je trenutna oznacena beseda v seznam dovoljenih, to polje obarva drugace.
-			if (oznacena != null && p.getStolpec() == oznacena.getStolpec() && p.getVrstica() == oznacena.getVrstica()) {
-				paintPossible(g2, potezaY, potezaX, a);
-			} else {
-				paintPossible(g2, potezaY, potezaX, b);
+		if (master.aktivniRisi()) { // NI SE DOKONCANO!
+			for(Poteza p: dovoljene) { // Za vsako potezo v seznamu dovoljenih, narisemo kvadratek ki oznacuje, da se na polje lahko izvede potezo.
+				int potezaX = p.getStolpec();
+				int potezaY = p.getVrstica();
+				// Ce je trenutna oznacena beseda v seznam dovoljenih, to polje obarva drugace.
+				if (oznacena != null && p.getStolpec() == oznacena.getStolpec() && p.getVrstica() == oznacena.getVrstica()) {
+					paintPossible(g2, potezaY, potezaX, a);
+				} else {
+					paintPossible(g2, potezaY, potezaX, b);
+				}
 			}
 		}
 	}

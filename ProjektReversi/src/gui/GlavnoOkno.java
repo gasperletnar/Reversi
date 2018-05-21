@@ -15,6 +15,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import logika.Igra;
+import logika.Igralec;
 import logika.Polje;
 import logika.Poteza;
 
@@ -109,6 +110,30 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	public Polje[][] getPlosca(){
 		return (igra == null ? null : igra.getPlosca());
 	}
+	
+	// NI SE DOKONCANO!
+	/**
+	 * @return Igralec na potezi.
+	 */
+	public boolean aktivniRisi() {
+		if (igra.naPotezi() == Igralec.BELI) {
+			return aliBClovek();
+		} else if (igra.naPotezi() == Igralec.CRNI) {
+			return aliCClovek();
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean aliCClovek() {
+		Strateg c = strategC;
+		return c instanceof Clovek;
+	}
+	
+	public boolean aliBClovek() {
+		Strateg b = strategC;
+		return b instanceof Clovek;
+	}
 
 	/**
 	 * Zazene novo igro.
@@ -117,7 +142,8 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		if (strategC != null) {strategC.prekini(); } // Da strateg od prejsnje igre ne naredi poteze v novi igri.
 		if (strategB != null) {strategB.prekini(); } // To pride v postev, ce igramo proti racunalniku.
 		igra = new Igra();
-		strategC = new Clovek(this); // Ustvarimo nov objekt razreda Clovek, argument je to GlavnoOkno.
+		strategC = new Racunalnik(this); // Ustvarimo nov objekt razreda Clovek, argument je to GlavnoOkno.
+		strategC.na_potezi();
 		strategB = new Clovek(this);
 		osveziGui();
 		repaint();
