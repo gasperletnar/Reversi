@@ -53,6 +53,8 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	private Strateg strategB;
 	
 	private JMenuItem nova_igra_IvsI; // JMenuItemi v atributih, da kasneje lahko dolocimo akcijo, ki naj se izvede ob kliku na dolocen gumb.
+	private JMenuItem nova_igra_IvsR;
+	private JMenuItem nova_igra_RvsR;
 	private JMenuItem izhod;
 	
 	public GlavnoOkno(){
@@ -65,9 +67,16 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		setJMenuBar(menu_bar);
 		JMenu igra_menu = new JMenu("Meni");
 		menu_bar.add(igra_menu);
+		
 		nova_igra_IvsI = new JMenuItem("Nova igra: Igralec proti igralcu");
 		igra_menu.add(nova_igra_IvsI);
 		nova_igra_IvsI.addActionListener(this);
+		nova_igra_IvsR = new JMenuItem("Nova igra: Igralec proti racunalniku");
+		igra_menu.add(nova_igra_IvsR);
+		nova_igra_IvsR.addActionListener(this);
+		nova_igra_RvsR = new JMenuItem("Nova igra: Racunalnik proti racunalniku");
+		igra_menu.add(nova_igra_RvsR);
+		nova_igra_RvsR.addActionListener(this);
 		igra_menu.addSeparator();
 		izhod = new JMenuItem("Izhod");
 		igra_menu.add(izhod);
@@ -101,7 +110,7 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		stevec_layout.fill = GridBagConstraints.CENTER;
 		getContentPane().add(stevec, stevec_layout);
 		
-		nova_igra();
+		nova_igra(true, false);
 	}
 	
 	/**
@@ -111,11 +120,10 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		return (igra == null ? null : igra.getPlosca());
 	}
 	
-	// NI SE DOKONCANO!
 	/**
-	 * @return Igralec na potezi.
+	 * @return True, ce je aktivni igralec clovek.
 	 */
-	public boolean aktivniRisi() {
+	public boolean aktivniClovek() {
 		if (igra.naPotezi() == Igralec.BELI) {
 			return aliBClovek();
 		} else if (igra.naPotezi() == Igralec.CRNI) {
@@ -125,26 +133,33 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * @return True, ce je crni igralec clovek.
+	 */
 	public boolean aliCClovek() {
 		Strateg c = strategC;
 		return c instanceof Clovek;
 	}
 	
+	/**
+	 * @return True, ce je beli igralec clovek.
+	 */
 	public boolean aliBClovek() {
-		Strateg b = strategC;
+		Strateg b = strategB;
 		return b instanceof Clovek;
 	}
 
 	/**
-	 * Zazene novo igro.
+	 * @param prvi True, ce je prvi igralec clovek.
+	 * @param drugi True, ce je drugi igralec clovek.
 	 */
-	public void nova_igra() {
+	public void nova_igra(boolean prvi, boolean drugi) {
 		if (strategC != null) {strategC.prekini(); } // Da strateg od prejsnje igre ne naredi poteze v novi igri.
 		if (strategB != null) {strategB.prekini(); } // To pride v postev, ce igramo proti racunalniku.
 		igra = new Igra();
-		strategC = new Racunalnik(this); // Ustvarimo nov objekt razreda Clovek, argument je to GlavnoOkno.
+		strategC = (prvi? new Clovek(this) : new Racunalnik(this));
 		strategC.na_potezi();
-		strategB = new Clovek(this);
+		strategB = (drugi? new Clovek(this) : new Racunalnik(this));
 		osveziGui();
 		repaint();
 	}
@@ -159,7 +174,13 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == nova_igra_IvsI) {
-			nova_igra();
+			nova_igra(true, true);
+		}
+		if (e.getSource() == nova_igra_IvsR) {
+			nova_igra(true, false);
+		}
+		if (e.getSource() == nova_igra_RvsR) {
+			nova_igra(false, false);
 		}
 		if (e.getSource() == izhod) {
 			dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
