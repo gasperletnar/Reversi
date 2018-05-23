@@ -22,6 +22,45 @@ public class Ocena {
 	public static final int VREDNOST_NEROBNEGA = 1;
 	public static final int VREDNOST_MOZNE_POTEZE = 2;
 	
+	private static int[][] pari = {{0,1}, {1,0}, {1,1}};
+	private static int n = Igra.N-1;
+	private static int[][] koti = {{0,0}, {n,0}, {0,n}, {n,n}};
+	private static int[][] sosediKotov = new int[12][];
+	static {
+		int i = 0;
+		for (int[] par : pari) {
+			for (int[] kot : koti) {
+				int a = (kot[0] == 0? kot[0] + par[0] : kot[0] - par[0]);
+				int b = (kot[1] == 0? kot[1] + par[1] : kot[1] - par[1]);
+				sosediKotov[i][0] = a;
+				sosediKotov[i][1] = b;
+				i++;
+			}
+		}
+	}
+	
+	public boolean aliJeKot(int a, int b) {
+		for (int[] kot : koti) {
+			if (a == kot[0] && b == kot[1]) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean aliJeSosedKota(int a, int b) {
+		for (int[] sosedi : sosediKotov) {
+			if (a == sosedi[0] && b == sosedi[1]) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean aliJeRob(int a, int b) {
+		return (a == 0 || b == 0 || a == n || b == n);
+	}
+	
 	public static int oceniPozicijo(Igralec jaz, Igra igra){
 		switch(igra.stanje()){
 		case ZMAGA_BELI:
