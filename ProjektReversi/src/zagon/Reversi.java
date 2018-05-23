@@ -1,6 +1,7 @@
 package zagon;
 
 import gui.GlavnoOkno;
+import logika.Igra;
 
 public class Reversi {
 

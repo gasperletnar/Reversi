@@ -39,7 +39,7 @@ public class Igra {
 			for (int j = 0; j < N; j++) {
 				plosca[i][j] = igra.plosca[i][j];
 			}
-		}
+		} 
 		naPotezi = igra.naPotezi;
 	}
 	
