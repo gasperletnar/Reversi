@@ -5,20 +5,21 @@ import logika.Igralec;
 import logika.Polje;
 
 public class Ocena {
-	private static final int ZMAGA = (1 << 20);
-	private static final int ZGUBA = -ZMAGA;
-	private static final int NEODLOCENO = 0;
+	private static final int ZMAGA = (1 << 20); // Vrednost zmage, ki mora biti vecja kot vse ostale vrednosti.
+	private static final int ZGUBA = -ZMAGA; // Vrednost izgube, ki mora biti manjša kot vse ostale vrednosti.
+	private static final int NEODLOCENO = 0; // Vrednost neodlocenega izida.
 	
-	private static final int POLJE = 1;
-	private static final int KOT = 50;
-	private static final int ROBNI_SOSED = -10;
-	private static final int DIAGONALNI_SOSED = -20;
-	private static final int ROB = 5;
+	private static final int POLJE = 1; // Vrednost posameznega polja.
+	private static final int KOT = 50; // Vrednost polja v kotu.
+	private static final int ROBNI_SOSED = -10; // Vrednost robnega polja, ki je sosed kota.
+	private static final int DIAGONALNI_SOSED = -20; // Vrednost polja, ki je sosed kota in NI roben.
+	private static final int ROB = 5; // Vrednost roba.
+	public static final int POTEZA = 2; // Vrednost mozne poteze.
 	
 	private static final int N = Igra.N-1;
-	private static final int[][] KOTI = {{0,0}, {0,N}, {N,0}, {N,N}};
-	private static final int[][] ROBNI_SOSEDI = {{0,1}, {0,N-1}, {1,0}, {1,N}, {N,1}, {N,N-1}, {N-1,0}, {N-1,N}};
-	private static final int[][] DIAGONALNI_SOSEDI = {{1,1}, {1,N-1}, {N-1,1}, {N-1,N-1}};
+	private static final int[][] KOTI = {{0,0}, {0,N}, {N,0}, {N,N}}; // Koordinate vseh 4 kotov.
+	private static final int[][] ROBNI_SOSEDI = {{0,1}, {0,N-1}, {1,0}, {1,N}, {N,1}, {N,N-1}, {N-1,0}, {N-1,N}}; // Koordinate robnih polj, ki so sosedi kota.
+	private static final int[][] DIAGONALNI_SOSEDI = {{1,1}, {1,N-1}, {N-1,1}, {N-1,N-1}}; // Koordinate polj, ki so sosedna kotu in niso robna.
 	
 	/**
 	 * Oceni koliko je vredna trenutna pozicije igre za danega igralca. Vrednost ocene je podana glede na polja na plosci,
@@ -93,6 +94,14 @@ public class Ocena {
 					case PRAZNO: break;
 					}
 				}
+			}
+			
+			// Ce je dani igralec na potezi, se mu za vsako mozno potezo pristeje vrednost POTEZA. Sicer so v seznamuDovoljenih
+			// mozne poteze na sprotnega igrala, v tem primeru se mu za vsako mozno potezo odsteje vrednost POTEZA.
+			int predznak = (jaz == igra.naPotezi()? 1 : -1);
+			switch (jaz) {
+			case BELI: vrednostBeli += predznak * igra.seznamDovoljenih().size() * POTEZA; break;
+			case CRNI: vrednostCrni += predznak * igra.seznamDovoljenih().size() * POTEZA; break;
 			}
 			return (jaz == Igralec.CRNI ? (vrednostCrni - vrednostBeli) : (vrednostBeli - vrednostCrni));
 		}
