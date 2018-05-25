@@ -5,6 +5,10 @@ import junit.framework.TestCase;
 import logika.Igra;
 import logika.Stanje;
 
+/**
+ * @author Gasper
+ * Testni razred za ugotavljanje pravilnost kode.
+ */
 public class TestLogikaIgre extends TestCase {
 	
 	public void testStanje() {
@@ -19,17 +23,20 @@ public class TestLogikaIgre extends TestCase {
 		igra.izvediPotezo(igra.seznamDovoljenih().get(0));
 		assertEquals(Stanje.NA_POTEZI_BELI, igra.stanje());
 		assertTrue(3 == igra.seznamDovoljenih().size());
+		igra.izvediPotezo(igra.seznamDovoljenih().get(0));
+		igra.izpisDovoljenih();
+		igra.izpis();
 		
 		// Zanka v kateri se vedno izvede prva mozna poteza na seznamu dovoljenih za aktivnega igralca.
 		while (igra.stanje() == Stanje.NA_POTEZI_BELI || igra.stanje() == Stanje.NA_POTEZI_CRNI) {
 			igra.izvediPotezo(igra.seznamDovoljenih().get(0));
 
 		}
-		// Ce je stanje igre v enem izmed koncnih stanje, aktivni igralec ne sme imeti nobene mozne poteze.
+		// Ko se zgornja zanka ustavi, smo v enem izmed koncnih stanj. Na potezi ne sme biti nihce izmed igralcev.
 		if (igra.stanje() == Stanje.NEODLOCENO || igra.stanje() == Stanje.ZMAGA_BELI || igra.stanje() == Stanje.ZMAGA_CRNI) {
 			igra.izpisDovoljenih();
 			igra.izpis();
-			assertTrue(igra.seznamDovoljenih().isEmpty());
+			assertTrue(igra.naPotezi() == null);
 		}
 		
 		

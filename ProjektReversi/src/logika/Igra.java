@@ -6,17 +6,38 @@ import java.util.List;
 
 import javafx.util.Pair;
 
+/**
+ * @author Gasper
+ * Vsak objekt razreda Igra predstavlja eno, posamezno igro Reversija. V sebi hrani vse informacije o igri - igralno plosco
+ * in z njo trenutno pozicijo; ter kdo je na potezi. Igralca plosca in igralec na potezi se spreminjata, ko se izvajajo poteze.
+ */
 public class Igra {
+	
+	/**
+	 * Igralna plosca.
+	 */
 	private Polje[][] plosca;
+	
+	/**
+	 * Igralec, ki je na potezi; null, ce je igre konec.
+	 */
 	private Igralec naPotezi;
+	
+	/**
+	 * Velikost igralne plosce je NxN.
+	 */
 	public static final int N = 8;
+	
+	/**
+	 * Tabela vseh 8ih smeri na plosci.
+	 */
 	private static final int[][] tabelaSmeri = {{1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1,1}, {0,1}};
 
 	/**
-	 * Ustvari igralno plosco; vsa polja prazna, razen sredinska 4.
+	 * Ustvari igralno plosco. Vsa polja prazna, razen sredinska 4. Na potezi je crni.
 	 */
 	public Igra() {
-		plosca = new Polje[N][N]; // Nova matrika NxN, elementi so tipa Polje, ni se doloceno katero izmed vrednosti konstant bodo zavzeli.
+		plosca = new Polje[N][N];
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				plosca[i][j] = Polje.PRAZNO;
@@ -30,7 +51,7 @@ public class Igra {
 	}
 	
 	/**
-	 * Prekopiramo podatke iz igre podane v argumentu.
+	 * Preslika podatke iz igre podane v argumentu.
 	 * @param igra
 	 */
 	public Igra(Igra igra) {
@@ -44,33 +65,31 @@ public class Igra {
 	}
 	
 	/**
-	 * @return Plosca igre.
+	 * @return plosca igre
 	 */
 	public Polje[][] getPlosca(){
 		return this.plosca;
 	}
 	
 	/**
-	 * @return Igralec na potezi.
+	 * @return igralec na potezi
 	 */
 	public Igralec naPotezi() {
 		return naPotezi;
 	}
 
 	/**
-	 * Izpise tabelo polj.
+	 * Izpis tabele polj.
 	 */
 	public void izpis() {
 		for (int i = 0; i < N; i++) {
 			System.out.print("|");
 			for (int j = 0; j < N; j++) {
-				if (plosca[i][j] == Polje.CRNO) {
-					System.out.print("B");
-				} else if (plosca[i][j] == Polje.BELO) {
-					System.out.print("C");
-			    } else {
-			    	System.out.print(".");
-			    }
+				switch (plosca[i][j]) {
+				case CRNO: System.out.print("B"); break;
+				case BELO: System.out.print("C"); break;
+				case PRAZNO: System.out.print("."); break;
+				}
 				if (j<N-1) System.out.print("  ");
 			}
 			System.out.println("|");
@@ -78,7 +97,7 @@ public class Igra {
 	}
 	
 	/**
-	 * @return Vrne stevilo polj za vsakega igralca - (stevilo crnih, stevilo belih).
+	 * @return stevilo polj za vsakega igralca - (stevilo crnih, stevilo belih)
 	 */
 	public Pair<Integer, Integer> prestejPolja() {
 		int crni = 0;
@@ -98,41 +117,36 @@ public class Igra {
 	}
 	
 	/**
-	 * @return Vrne stanje ob koncu igre.
+	 * @return stanje ob koncu igre
 	 */
 	public Stanje koncniIzracun() {
 		Pair<Integer, Integer> koncenpar = prestejPolja();
 		int crni = koncenpar.getKey();
 		int beli = koncenpar.getValue();
 		if (crni > beli) {
-			Stanje stanjeIgre = Stanje.ZMAGA_CRNI;
-			return stanjeIgre;
+			return Stanje.ZMAGA_CRNI;
 		} else if (beli > crni) {
-			Stanje stanjeIgre = Stanje.ZMAGA_BELI;
-			return stanjeIgre;
+			return Stanje.ZMAGA_BELI;
 		} else {
-			Stanje stanjeIgre = Stanje.NEODLOCENO;
-			return stanjeIgre;
+			return Stanje.NEODLOCENO;
 			}
 		}
 	
 	/**
-	 * @return Stanje igre.
+	 * @return stanje igre
 	 */
 	public Stanje stanje() {
 		if (naPotezi == Igralec.BELI) {
-			Stanje stanjeIgre = Stanje.NA_POTEZI_BELI;
-			return stanjeIgre;
-		} else if (naPotezi == Igralec.CRNI){
-			Stanje stanjeIgre = Stanje.NA_POTEZI_CRNI;
-			return stanjeIgre;
+			return Stanje.NA_POTEZI_BELI;
+		} else if (naPotezi == Igralec.CRNI) {
+			return Stanje.NA_POTEZI_CRNI;
 		} else {
 			return koncniIzracun();
 		}
 	}
 
 	/**
-	 * @return Seznam moznih potez aktivnega igralca.
+	 * @return seznam moznih potez aktivnega igralca
 	 */
 	public List<Poteza> seznamDovoljenih() {
 		LinkedList<Poteza>  dovoljene = new LinkedList<Poteza>();
@@ -162,7 +176,7 @@ public class Igra {
 						// Vsaj eno polje nasprotnega igralca + naslednje polje takoj za linijo nasprotnikovih mora biti od igralca na potezi.
 						if (k > 0 && (0 <= i+y) && (0 <= j+x) && (i+y < N) && (j+x < N) &&  plosca[i+y][j+x] == aktivno) {
 							dovoljene.add(moznaPoteza);
-							break; // Ustavimo, ko prvic ugotovimo, da je poteza mozna.
+							break; // Dovolj je, da poteza izpolnjuje pogoje za samo eno smer. Ustavimo in jo dodamo v mozne.
 							// Kasneje, ko se bo poteza izvedla, se bo se enkrat poracunalo in pa v VSE smeri.
 						}
 					}
@@ -173,23 +187,25 @@ public class Igra {
 	}
 	
 	/**
-	 * Izpise dovoljene poteze aktivnega igralca.
+	 * Izpis dovoljenih potez aktivnega igralca.
 	 */
 	public void izpisDovoljenih() {
 		if (seznamDovoljenih().isEmpty()) {
 			System.out.println("Nobena poteza ni vec mozna.");
 		} else {
+			System.out.print("Polja, kjer lahko igramo potezo(x, y): ");
 			List<Poteza> s = seznamDovoljenih();
 			for (Poteza mozna : s) {
-				System.out.println((mozna.vrstica + 1) + ", " + (mozna.stolpec + 1));
+				System.out.print("(" + (mozna.vrstica + 1) + ", " + (mozna.stolpec + 1) + ")");
 			}
+			System.out.println();
 		}
 	}
 	
 	/**
 	 * Izvede potezo, ce je ta le mozna. Spremeni barvo tistih polj, ki jih doloca poteza.
-	 * @param Poteza
-	 * @return Vrne true, ce se je poteza izvedla, false sicer.
+	 * @param poteza
+	 * @return true, ce se je poteza izvedla; false sicer
 	 */
 	public boolean izvediPotezo(Poteza p) {
 		int i = p.vrstica;
@@ -198,7 +214,7 @@ public class Igra {
 			return false;
 		}
 		
-		Polje aktivno = naPotezi.dobiPolje(); // Doloci polje aktivnega igralca.
+		Polje aktivno = naPotezi.dobiPolje();
 		Polje nasprotno = naPotezi.nasprotnik().dobiPolje();
 		int l = 0; // Belezi v koliko razlicnih smeri, iz polja kamor naj bi se izvedla poteza, spremenimo nasprotnikova polja v nasa.
 		for (int[] smer : tabelaSmeri) { 

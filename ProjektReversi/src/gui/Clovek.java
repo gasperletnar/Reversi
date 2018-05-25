@@ -10,7 +10,7 @@ public class Clovek extends Strateg {
 	}
 
 	@Override
-	public void na_potezi() { // GlavnoOkno doloca, kdo je na potezi.
+	public void naPotezi() { // GlavnoOkno doloca, kdo je na potezi.
 	}
 
 	@Override

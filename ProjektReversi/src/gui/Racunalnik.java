@@ -15,7 +15,7 @@ public class Racunalnik extends Strateg {
 	}
 
 	@Override
-	public void na_potezi() {
+	public void naPotezi() {
 		sw = new NakljucnaInteligenca(master);
 		sw.execute();
 	}

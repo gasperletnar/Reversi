@@ -5,7 +5,7 @@ public abstract class Strateg { // Abstrakten razred, ima dva konkretna podrazre
 	/**
 	 * GlavnoOkno klice to metodo na objektu razreda Strateg, ko je na potezi.
 	 */
-	public abstract void na_potezi();
+	public abstract void naPotezi();
 	
 	/**
 	 * Strateg neha igrati.

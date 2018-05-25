@@ -23,7 +23,7 @@ import logika.Poteza;
 public class GlavnoOkno extends JFrame implements ActionListener {
 	
 	/**
-	 * JPanel, sem se narise polje z vsem kar vsebuje.
+	 * JPanel, sem se narise igralna plosca z vsem kar vsebuje.
 	 */
 	private Platno platno;
 	
@@ -52,9 +52,10 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	 */
 	private Strateg strategB;
 	
-	private JMenuItem nova_igra_IvsI; // JMenuItemi v atributih, da kasneje lahko dolocimo akcijo, ki naj se izvede ob kliku na dolocen gumb.
-	private JMenuItem nova_igra_IvsR;
-	private JMenuItem nova_igra_RvsR;
+	private JMenuItem iVsI; // Nova igra igralec proti igralcu.
+	private JMenuItem iVsR; // Nova igra igralec proti racunalniku.
+	private JMenuItem rVsI; // Nova igra racunalniku proti igralcu.
+	private JMenuItem rVsR; // Nova igra racunalniku proti racunalniku.
 	private JMenuItem izhod;
 	
 	public GlavnoOkno(){
@@ -68,15 +69,19 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		JMenu igra_menu = new JMenu("Meni");
 		menu_bar.add(igra_menu);
 		
-		nova_igra_IvsI = new JMenuItem("Nova igra: Igralec proti igralcu");
-		igra_menu.add(nova_igra_IvsI);
-		nova_igra_IvsI.addActionListener(this);
-		nova_igra_IvsR = new JMenuItem("Nova igra: Igralec proti racunalniku");
-		igra_menu.add(nova_igra_IvsR);
-		nova_igra_IvsR.addActionListener(this);
-		nova_igra_RvsR = new JMenuItem("Nova igra: Racunalnik proti racunalniku");
-		igra_menu.add(nova_igra_RvsR);
-		nova_igra_RvsR.addActionListener(this);
+		iVsI = new JMenuItem("Nova igra: Igralec proti igralcu");
+		igra_menu.add(iVsI);
+		iVsI.addActionListener(this);
+		iVsR = new JMenuItem("Nova igra: Igralec proti racunalniku");
+		igra_menu.add(iVsR);
+		iVsR.addActionListener(this);
+		rVsI = new JMenuItem("Nova igra: Racunalnik proti igralcu");
+		igra_menu.add(rVsI);
+		rVsI.addActionListener(this);
+		rVsR = new JMenuItem("Nova igra: Racunalnik proti racunalniku");
+		igra_menu.add(rVsR);
+		rVsR.addActionListener(this);
+		
 		igra_menu.addSeparator();
 		izhod = new JMenuItem("Izhod");
 		igra_menu.add(izhod);
@@ -85,20 +90,20 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		// Nasa plosca.
 		platno = new Platno(this);
 		GridBagConstraints polje_layout = new GridBagConstraints();
-		polje_layout.gridx = 0; // Kje stoji.
+		polje_layout.gridx = 0;
 		polje_layout.gridy = 1;
-		polje_layout.fill = GridBagConstraints.BOTH; // Kam se razsiri.
-		polje_layout.weightx = 1; // Kako si razdeli odveèen prostor v horizontali z ostalimi.
+		polje_layout.fill = GridBagConstraints.BOTH;
+		polje_layout.weightx = 1;
 		polje_layout.weighty = 1;
 		getContentPane().add(platno, polje_layout);
 		
 		// Prostor pod plosco, kjer bo izpisano stanje igre.
 		status = new JLabel();
-		status.setFont(new Font(status.getFont().getName(), status.getFont().getStyle(), 20)); // Nastavimo ime fonta, stil in velikost.
+		status.setFont(new Font(status.getFont().getName(), status.getFont().getStyle(), 20));
 		GridBagConstraints status_layout = new GridBagConstraints();
 		status_layout.gridx = 0;
 		status_layout.gridy = 2;
-		status_layout.fill = GridBagConstraints.CENTER; // Velikost prostora informacij je "konstantna", zato ni weightx in weighty.
+		status_layout.fill = GridBagConstraints.CENTER;
 		getContentPane().add(status, status_layout);
 		
 		// Prostor nad plosco, kjer bo izpisano trenutno stevilo zetonov obeh igralcev.
@@ -114,16 +119,18 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	}
 	
 	/**
-	 * @return Plosca aktivne igre; null ce igre ni.
+	 * @return plosca aktivne igre; null ce igre ni
 	 */
 	public Polje[][] getPlosca(){
 		return (igra == null ? null : igra.getPlosca());
 	}
 	
 	/**
-	 * @return True, ce je aktivni igralec clovek.
+	 * Vrne false tudi v primeru, ko ni nihce na potezi.
+	 * @return true, ce je aktivni igralec clovek; sicer false
 	 */
 	public boolean aktivniClovek() {
+		if (igra == null) return false;
 		if (igra.naPotezi() == Igralec.BELI) {
 			return aliBClovek();
 		} else if (igra.naPotezi() == Igralec.CRNI) {
@@ -134,7 +141,7 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	}
 	
 	/**
-	 * @return True, ce je crni igralec clovek.
+	 * @return true, ce je crni igralec clovek; false ce racunalnik
 	 */
 	public boolean aliCClovek() {
 		Strateg c = strategC;
@@ -142,7 +149,7 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	}
 	
 	/**
-	 * @return True, ce je beli igralec clovek.
+	 * @return true, ce je beli igralec clovek; false ce racunalnik
 	 */
 	public boolean aliBClovek() {
 		Strateg b = strategB;
@@ -150,22 +157,22 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * @param prvi True, ce je prvi igralec clovek.
-	 * @param drugi True, ce je drugi igralec clovek.
+	 * @param prvi - true, ce je prvi igralec clovek; false ce racunalnik
+	 * @param drugi - true, ce je drugi igralec clovek; false ce racunalnik
 	 */
 	public void nova_igra(boolean prvi, boolean drugi) {
 		if (strategC != null) {strategC.prekini(); } // Da strateg od prejsnje igre ne naredi poteze v novi igri.
 		if (strategB != null) {strategB.prekini(); } // To pride v postev, ce igramo proti racunalniku.
 		igra = new Igra();
 		strategC = (prvi? new Clovek(this) : new Racunalnik(this));
-		strategC.na_potezi();
+		strategC.naPotezi();
 		strategB = (drugi? new Clovek(this) : new Racunalnik(this));
 		osveziGui();
 		repaint();
 	}
 	
 	/**
-	 * @return Seznam dovoljenih; null, ce igra ni v teku.
+	 * @return seznam dovoljenih; null, ce igra ni v teku
 	 */
 	public List<Poteza> seznamDovoljenih(){
 		return(igra == null? Collections.emptyList() : igra.seznamDovoljenih());
@@ -173,13 +180,16 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == nova_igra_IvsI) {
+		if (e.getSource() == iVsI) {
 			nova_igra(true, true);
 		}
-		if (e.getSource() == nova_igra_IvsR) {
+		if (e.getSource() == iVsR) {
 			nova_igra(true, false);
 		}
-		if (e.getSource() == nova_igra_RvsR) {
+		if (e.getSource() == rVsI) {
+			nova_igra(false, true);
+		}
+		if (e.getSource() == rVsR) {
 			nova_igra(false, false);
 		}
 		if (e.getSource() == izhod) {
@@ -188,21 +198,21 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	}
 	
 	/**
-	 * Izvede se poteza v igri nato poklice na aktivnem strategu metodo naPotezi().
-	 * @param p Poteza.
+	 * Izvede se poteza v igri. Ce je v novem stanju igre na potezi eden izmed strategov, na njem poklice metodo naPotezi().
+	 * @param p - poteza
 	 */
 	public void odigraj(Poteza p) {
 		igra.izvediPotezo(p);
 		osveziGui(); // Na novo narisemo polje; se pravi polje po izvedeni zadnji potezi.
 		switch (igra.stanje()){ // Glede na stanje igre iz logike igre, izvedemo eno izmed spodnjih vrstic.
-		case NA_POTEZI_BELI: strategB.na_potezi(); break;
-		case NA_POTEZI_CRNI: strategC.na_potezi(); break;
+		case NA_POTEZI_BELI: strategB.naPotezi(); break;
+		case NA_POTEZI_CRNI: strategC.naPotezi(); break;
 		default: break;
 		}
 	}
 	
 	/**
-	 * Spremeni text layoutov status in stevec, na novo nariše na platno.
+	 * Spremeni text layoutov status in stevec, na novo narise na platno.
 	 */
 	public void osveziGui() {
 		if (igra == null) {
@@ -223,8 +233,8 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	
 	/**
 	 * Ce igramo igro in je na potezi crni(beli), naj strategC(strategB) izvede metodo klik(x, y).
-	 * @param x - X koordinata na polju.
-	 * @param y - Y koordinata na polju.
+	 * @param x - x koordinata polja
+	 * @param y - y koordinata polja
 	 */
 	public void klikniPolje(int x, int y) {
 		if (igra != null) {
@@ -242,9 +252,9 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	}
 	
 	/**
-	 * @return Kopija trenune igre. 
+	 * @return kopija trenune igre
 	 */
-	public Igra copyIgra() { // Namenjeno racunalniku.
+	public Igra copyIgra() {
 		return new Igra(igra);
 	}
 }
