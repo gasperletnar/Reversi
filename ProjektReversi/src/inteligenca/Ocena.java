@@ -5,9 +5,9 @@ import logika.Igralec;
 import logika.Polje;
 
 public class Ocena {
-	private static final int ZMAGA = (1 << 20); // Vrednost zmage, ki mora biti vecja kot vse ostale vrednosti.
-	private static final int ZGUBA = -ZMAGA; // Vrednost izgube, ki mora biti manjša kot vse ostale vrednosti.
-	private static final int NEODLOCENO = 0; // Vrednost neodlocenega izida.
+	public static final int ZMAGA = (1 << 20); // Vrednost zmage, ki mora biti vecja kot vse ostale vrednosti.
+	public static final int ZGUBA = -ZMAGA; // Vrednost izgube, ki mora biti manjša kot vse ostale vrednosti.
+	public static final int NEODLOCENO = 0; // Vrednost neodlocenega izida.
 	
 	private static final int POLJE = 1; // Vrednost posameznega polja.
 	private static final int KOT = 50; // Vrednost polja v kotu.
