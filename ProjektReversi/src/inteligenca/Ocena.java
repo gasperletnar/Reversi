@@ -59,7 +59,7 @@ public class Ocena {
 			int vrednostBeli = 0;
 			int vrednostCrni = 0;
 			
-			// Pregledamo notranje polja plosce in pristevamo vrednosti tistemu igralcu, cigar polje je.
+			// Pregledamo notranja polja plosce in pristevamo vrednosti tistemu igralcu, cigar polje je.
 			for (int i = 1; i < N; i++) {
 				for (int j = 1; j < N; j++) {
 					switch (plosca[i][j]) {

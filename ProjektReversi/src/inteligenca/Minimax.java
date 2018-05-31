@@ -6,13 +6,13 @@ import gui.GlavnoOkno;
 import logika.Igra;
 import logika.Igralec;
 import logika.Poteza;
+import logika.Stanje;
 
 public class Minimax extends SwingWorker<Poteza, Object> {
 	private GlavnoOkno master;
 	private int globina;
 	private Igralec jaz;
 	
-	// Potrebno bo narediti, da se globina šteje glede na to, koliko igralcev se menja, ne koliko potez je odigranih
 	public Minimax(GlavnoOkno master, int globina, Igralec jaz) {
 		super();
 		this.master = master;
@@ -24,9 +24,13 @@ public class Minimax extends SwingWorker<Poteza, Object> {
 	@Override
 	protected Poteza doInBackground() throws Exception {
 		Igra igra = master.copyIgra();
-		return null;
+		OcenjenaPoteza p = minimax(0, igra);
+		assert (p.poteza != null);
+		System.out.println("Minimax: " + p);
+		return p.poteza;
 	}
 	
+	@Override
 	public void done() {
 		try {
 			Poteza p = this.get();
@@ -58,8 +62,17 @@ public class Minimax extends SwingWorker<Poteza, Object> {
 		for (Poteza p: igra.seznamDovoljenih()) {
 			// Naredimo kopijo, da lahko na njej naredimo korak, brez da bi to vplivalo na naso igro
 			Igra kopijaIgre = new Igra(igra);
+			Stanje trenutnoStanje = kopijaIgre.stanje();
 			kopijaIgre.izvediPotezo(p);
-			int ocenaP = minimax(k+1, kopijaIgre).vrednost;
+			Stanje naslednjeStanje = kopijaIgre.stanje();
+			int ocenaP = 0;
+			// Preverimo, ali se je stanje spremenilo po izvedbi poteze, ce se je, globino povecamo
+			if (trenutnoStanje != naslednjeStanje){
+				ocenaP = minimax(k+1, kopijaIgre).vrednost;
+			}
+			else{
+				ocenaP = minimax(k, kopijaIgre).vrednost;
+			}
 			// Preverimo, ali je ta vrednost res najboljsa
 			if (najboljsa == null || (naPotezi == jaz && ocenaP > ocenaNajboljse)
 			|| (naPotezi != jaz && ocenaP < ocenaNajboljse)){

@@ -1,12 +1,15 @@
 package gui;
 
+import logika.Igralec;
 import logika.Poteza;
 
 public class Clovek extends Strateg {
 	private GlavnoOkno master;
+	private Igralec jaz;
 	
-	public Clovek(GlavnoOkno master) { // Ko Strateg dela, potrebuje dostop do okna, da izvede potezo.
+	public Clovek(GlavnoOkno master, Igralec jaz) { // Ko Strateg dela, potrebuje dostop do okna, da izvede potezo.
 		this.master = master;
+		this.jaz = jaz;
 	}
 
 	@Override
@@ -20,6 +23,12 @@ public class Clovek extends Strateg {
 
 	@Override
 	public void prekini() {		
+	}
+
+	@Override
+	public int getTezavnost() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

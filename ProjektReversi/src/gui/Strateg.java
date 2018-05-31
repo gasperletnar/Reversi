@@ -18,4 +18,6 @@ public abstract class Strateg { // Abstrakten razred, ima dva konkretna podrazre
 	 * @param y - y koordinata klika miske.
 	 */
 	public abstract void klik(int x, int y);
+	
+	public abstract int getTezavnost();
 }

@@ -9,11 +9,15 @@ import java.awt.event.WindowEvent;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
+
 import logika.Igra;
 import logika.Igralec;
 import logika.Polje;
@@ -43,6 +47,11 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	private JLabel stevec;
 	
 	/**
+	 * Informacija v oknu, pove trenutno tezavnost
+	 */
+	private JLabel tezavnostTekst;
+	
+	/**
 	 * Strateg, ki vlece poteze crnega igralca.
 	 */
 	private Strateg strategC;
@@ -52,10 +61,23 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	 */
 	private Strateg strategB;
 	
+	/**
+	 * Stopnja tezavnosti, od 2 do 5
+	 */
+	private int tezavnost;
+	
 	private JMenuItem iVsI; // Nova igra igralec proti igralcu.
 	private JMenuItem iVsR; // Nova igra igralec proti racunalniku.
 	private JMenuItem rVsI; // Nova igra racunalniku proti igralcu.
 	private JMenuItem rVsR; // Nova igra racunalniku proti racunalniku.
+	
+	// Tezavnost
+	
+	private JMenuItem lahko;
+	private JMenuItem srednje;
+	private JMenuItem tezko;
+	private JMenuItem zeloTezko;
+	
 	private JMenuItem izhod;
 	
 	public GlavnoOkno(){
@@ -68,6 +90,26 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		setJMenuBar(menu_bar);
 		JMenu igra_menu = new JMenu("Meni");
 		menu_bar.add(igra_menu);
+		JMenu igra_tezavnost = new JMenu("Tezavnost");
+		menu_bar.add(igra_tezavnost);
+		
+		ButtonGroup grupaGumbov = new ButtonGroup();
+		lahko = new JRadioButtonMenuItem("Lahko");
+		grupaGumbov.add(lahko);
+		igra_tezavnost.add(lahko);
+		lahko.addActionListener(this);
+		srednje = new JRadioButtonMenuItem("Srednje");
+		grupaGumbov.add(srednje);
+		igra_tezavnost.add(srednje);
+		srednje.addActionListener(this);
+		tezko = new JRadioButtonMenuItem("Tezko");
+		grupaGumbov.add(tezko);
+		igra_tezavnost.add(tezko);
+		tezko.addActionListener(this);
+		zeloTezko = new JRadioButtonMenuItem("Zelo tezko");
+		grupaGumbov.add(zeloTezko);
+		igra_tezavnost.add(zeloTezko);
+		zeloTezko.addActionListener(this);
 		
 		iVsI = new JMenuItem("Nova igra: Igralec proti igralcu");
 		igra_menu.add(iVsI);
@@ -108,14 +150,23 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		
 		// Prostor nad plosco, kjer bo izpisano trenutno stevilo zetonov obeh igralcev.
 		stevec = new JLabel();
-		stevec.setFont(new Font(status.getFont().getName(), status.getFont().getStyle(), 20));
+		stevec.setFont(new Font(stevec.getFont().getName(), stevec.getFont().getStyle(), 20));
 		GridBagConstraints stevec_layout = new GridBagConstraints();
 		stevec_layout.gridx = 0;
 		stevec_layout.gridy = 0;
 		stevec_layout.fill = GridBagConstraints.CENTER;
 		getContentPane().add(stevec, stevec_layout);
 		
-		nova_igra(true, false);
+		tezavnostTekst = new JLabel();
+		tezavnostTekst.setFont(new Font(tezavnostTekst.getFont().getName(), tezavnostTekst.getFont().getStyle(), 20));
+		GridBagConstraints tezavnostTekst_layout = new GridBagConstraints();
+		tezavnostTekst_layout.gridx = 0;
+		tezavnostTekst_layout.gridy = 3;
+		tezavnostTekst_layout.fill = GridBagConstraints.CENTER;
+		getContentPane().add(tezavnostTekst, tezavnostTekst_layout);
+		
+		this.tezavnost = 3;
+		nova_igra(true, false, tezavnost);
 	}
 	
 	/**
@@ -160,13 +211,13 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	 * @param prvi - true, ce je prvi igralec clovek; false ce racunalnik
 	 * @param drugi - true, ce je drugi igralec clovek; false ce racunalnik
 	 */
-	public void nova_igra(boolean prvi, boolean drugi) {
+	public void nova_igra(boolean prvi, boolean drugi, int tezavnost) {
 		if (strategC != null) {strategC.prekini(); } // Da strateg od prejsnje igre ne naredi poteze v novi igri.
 		if (strategB != null) {strategB.prekini(); } // To pride v postev, ce igramo proti racunalniku.
 		igra = new Igra();
-		strategC = (prvi? new Clovek(this) : new Racunalnik(this));
+		strategC = (prvi? new Clovek(this, Igralec.CRNI) : new Racunalnik(this, Igralec.CRNI, tezavnost));
 		strategC.naPotezi();
-		strategB = (drugi? new Clovek(this) : new Racunalnik(this));
+		strategB = (drugi? new Clovek(this, Igralec.BELI) : new Racunalnik(this, Igralec.BELI, tezavnost));
 		osveziGui();
 		repaint();
 	}
@@ -181,19 +232,31 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == iVsI) {
-			nova_igra(true, true);
+			nova_igra(true, true, tezavnost);
 		}
 		if (e.getSource() == iVsR) {
-			nova_igra(true, false);
+			nova_igra(true, false, tezavnost);
 		}
 		if (e.getSource() == rVsI) {
-			nova_igra(false, true);
+			nova_igra(false, true, tezavnost);
 		}
 		if (e.getSource() == rVsR) {
-			nova_igra(false, false);
+			nova_igra(false, false, tezavnost);
 		}
 		if (e.getSource() == izhod) {
 			dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+		}
+		if (e.getSource() == lahko){
+			tezavnost = 2;
+		}
+		if (e.getSource() == srednje){
+			tezavnost = 3;
+		}
+		if (e.getSource() == tezko){
+			tezavnost = 4;
+		}
+		if (e.getSource() == zeloTezko){
+			tezavnost = 5;
 		}
 	}
 	
@@ -227,6 +290,12 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 			case NEODLOCENO: status.setText("Konec igre, nihèe ni zmagal!"); break;
 			}
 			stevec.setText("Èrni: " + igra.prestejPolja().getKey() + " - Beli: " + igra.prestejPolja().getValue());
+			if (aliCClovek()){
+				tezavnostTekst.setText(Integer.toString(strategB.getTezavnost()));
+			}
+			if (aliBClovek()){
+				tezavnostTekst.setText(Integer.toString(strategC.getTezavnost()));
+			}
 		}
 		platno.repaint();
 	}
