@@ -1,0 +1,7 @@
+Reversi je igra za dva igralca, kjer en igralec uporablja bele zetone, drugi pa crne.
+Vsakic, ko je aktivni igralec na potezi, lahko postavi svoj zeton na prazno polje, ce
+je vsaj en(lahko vec) nasprotnikov zeton obdan z zetoni aktivnega igralca. Vsi taki zetoni
+nato postanejo od aktivnega igralca, nakar ima potezo drugi igralec. V primeru, da drugi
+igralec ne more storiti nobene poteze, je na vrsti se enkrat isti igralec. Ce tudi ta ne
+more narediti nobene poteze, je igre konec. Prav tako je igre konec, ko zmanjka prostih
+polj. Zmaga igralec, ki ima vecje stevilo zetonov ob koncu igre.

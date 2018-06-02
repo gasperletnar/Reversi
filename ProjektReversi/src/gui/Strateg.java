@@ -1,6 +1,10 @@
 package gui;
 
-public abstract class Strateg { // Abstrakten razred, ima dva konkretna podrazreda: Racunalnik in Clovek.
+/**
+ * @author Gasper
+ * Strateg je objekt, ki zna odigrati potezo. Lahko je clovek ali racunalnik.
+ */
+public abstract class Strateg {
 	
 	/**
 	 * GlavnoOkno klice to metodo na objektu razreda Strateg, ko je na potezi.
@@ -13,11 +17,9 @@ public abstract class Strateg { // Abstrakten razred, ima dva konkretna podrazre
 	public abstract void prekini();
 	
 	/**
-	 * GlavnoOkno klice to metodo, ko uporabnik klikne na mesto (x, y) na polju.
-	 * @param x - x koordinata klika miske.
-	 * @param y - y koordinata klika miske.
+	 * GlavnoOkno klice to metodo, ko uporabnik klikne na polje (x, y) na igralni plosci - polj je NxN.
+	 * @param x - 1. index polja klika miske
+	 * @param y - 2. index polja klika miske
 	 */
 	public abstract void klik(int x, int y);
-	
-	public abstract int getTezavnost();
 }

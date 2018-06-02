@@ -16,8 +16,16 @@ import logika.Igra;
 import logika.Polje;
 import logika.Poteza;
 
+/**
+ * @author Gasper
+ * Na objekt razreda Platno se narise igra reversija.
+ */
 @SuppressWarnings("serial")
 public class Platno extends JPanel implements MouseListener, MouseMotionListener {
+	
+	/**
+	 * JFrame, ki bo prikazoval vsebino platna.
+	 */
 	private GlavnoOkno master;
 	
 	/**
@@ -35,6 +43,10 @@ public class Platno extends JPanel implements MouseListener, MouseMotionListener
 	 */
 	private final static double PADDING = 0.1;
 	
+	/**
+	 * Ustvari novo platno.
+	 * @param master
+	 */
 	public Platno(GlavnoOkno master) {
 		super();
 		this.master = master;
@@ -43,14 +55,14 @@ public class Platno extends JPanel implements MouseListener, MouseMotionListener
 	}
 	
 	/**
-	 * @return Dolžina stranice kvadrata polja.
+	 * @return dolzina stranice kvadrata polja
 	 */
 	private double stKvadrata() {
-		return Math.min(getWidth(), getHeight()) / Igra.N; // Minimum sirine/visine platna, delimo z stevilom polj igre - platno razdeli na N delov.
+		return Math.min(getWidth(), getHeight()) / Igra.N; // Platno razdeli na N delov(igra ima plosco NxN).
 	}
 	
 	@Override
-	public Dimension getPreferredSize() { // Velikost platna je nastavljena na 600*600.
+	public Dimension getPreferredSize() {
 		return new Dimension(600, 600);
 	}
 	
@@ -59,20 +71,17 @@ public class Platno extends JPanel implements MouseListener, MouseMotionListener
 	 * @param g2
 	 * @param i
 	 * @param j
-	 * @param igralec Barva ploscka.
+	 * @param igralec - barva ploscka
 	 */
 	private void paintFigure(Graphics2D g2, int i, int j, Color bIgralca) {
 		double s = stKvadrata();
-		// Premer je stranica kvadrata(se preden so narisane crte) - na vsaki strani polovica sirine crte - na vsaki strani razdalja do roba(PADDING).
 		double r = s * (1.0 - LINE_WIDTH - 2.0 * PADDING);
-		// X koordinata zgornjega oglisca kvadrata(se preden so narisane crte) je s*i. Treba se popraviti za toliko, kolikor je polmer krajsi:
-		// s * polovica sirine crte +  s * padding.
 		double x = s * (i + 0.5 * LINE_WIDTH + PADDING);
 		double y = s * (j + 0.5 * LINE_WIDTH + PADDING);
 		g2.setColor(bIgralca);
 		g2.setStroke(new BasicStroke((float) (s * LINE_WIDTH)));
-		g2.fillOval((int)x+1, (int)y+1, (int)r, (int)r);  // Odstopanje za 1 pixel, zato + 1.
-		g2.setColor(Color.DARK_GRAY); // Obroba plosckov.
+		g2.fillOval((int)x+1, (int)y+1, (int)r, (int)r);
+		g2.setColor(Color.DARK_GRAY); // Obroba ploscka.
 		g2.setStroke(new BasicStroke(2));
 		g2.drawOval((int)x+1, (int)y+1, (int)r, (int)r);
 	}
@@ -96,7 +105,7 @@ public class Platno extends JPanel implements MouseListener, MouseMotionListener
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D)g; // Povemo javi da je g razreda Graphics2D - vec metod.
+		Graphics2D g2 = (Graphics2D)g;
 		double s = stKvadrata();
 		g2.setColor(new Color(34,139,34));
 		g2.fillRect(0, 0, (int)(Igra.N*s), (int)(Igra.N*s)); // Pobarvamo plosco zeleno.
@@ -104,10 +113,10 @@ public class Platno extends JPanel implements MouseListener, MouseMotionListener
 		g2.setStroke(new BasicStroke((float) (s * LINE_WIDTH))); // Debelina crte za risanje, prilagaja se velikosti platna.
 		for (int i = 0; i < Igra.N + 1; i++) {
 			// Navpicne crte. Narisali bomo N+2 crt, 2 dodatni za rob.
-			g2.drawLine((int)(i*s), // Vsakic i pomnozimo z s(stranico kvadrata) - ko i naraste za 1, se premaknemo za eno stranico naprej.
+			g2.drawLine((int)(i*s),
 				    (int)(0),
-				    (int)(i*s), // Vertikala ostane ista.
-				    (int)(Igra.N*s)); // Horizontala gre od 0 pa do stevila polj * stranica enega kvadrata polja.
+				    (int)(i*s),
+				    (int)(Igra.N*s));
 			// Vodoravne crte.
 			g2.drawLine((int)(0),
 				    (int)(i*s),
@@ -118,7 +127,7 @@ public class Platno extends JPanel implements MouseListener, MouseMotionListener
 		if (plosca != null) {
 			for (int i = 0; i < Igra.N; i++) {
 				for (int j = 0; j < Igra.N; j++) {
-					switch (plosca[i][j]) { // V odvisnosti od barve polja na plosci, narise ploscek na polje na platnu.
+					switch (plosca[i][j]) { // V odvisnosti od barve polja na igralni plosci, narise ploscek na polje na platnu.
 					case CRNO: paintFigure(g2, i, j, Color.BLACK); break;
 					case BELO: paintFigure(g2, i, j, Color.WHITE); break;
 					default: break;
@@ -130,11 +139,11 @@ public class Platno extends JPanel implements MouseListener, MouseMotionListener
 		Color a = new Color(0, 100, 0);
 		Color b = new Color(50, 205, 50);
 		List<Poteza> dovoljene = master.seznamDovoljenih();
-		if (master.aktivniClovek()) { // Ce je aktivni igralec clovek, se bodo narisale mozne poteze.
-			for(Poteza p: dovoljene) { // Za vsako potezo v seznamu dovoljenih, narisemo kvadratek ki oznacuje, da se na polje lahko izvede potezo.
+		if (master.aktivniClovek()) { // Polja kamor lahko igramo potezo izpostavimo - le ce je aktivni igralec clovek
+			for(Poteza p: dovoljene) {
 				int potezaX = p.getStolpec();
 				int potezaY = p.getVrstica();
-				// Ce je oznacena poteza(poteza na polje s katerim kazemo trenutno z misko) v seznamu dovoljenih, to polje obarva drugace.
+				// Polje kamor lahko igramo potezo in nanj kazemo z misko se obarva drugace.
 				if (oznacena != null && p.getStolpec() == oznacena.getStolpec() && p.getVrstica() == oznacena.getVrstica()) {
 					paintPossible(g2, potezaY, potezaX, a);
 				} else {
@@ -169,8 +178,6 @@ public class Platno extends JPanel implements MouseListener, MouseMotionListener
 			0.5 * LINE_WIDTH < dj && dj < 1.0 - 0.5 * LINE_WIDTH) {
 			master.klikniPolje(i, j);
 		}
-		// Poslje sporocilo master-ju, da se je kliknilo na polje (i, j).
-		// Master nato glede na argumente i, j izvede metodo klikniPolje(i, j).
 	}
 
 	@Override

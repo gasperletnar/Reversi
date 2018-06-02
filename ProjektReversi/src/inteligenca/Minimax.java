@@ -8,9 +8,21 @@ import logika.Igralec;
 import logika.Poteza;
 import logika.Stanje;
 
+/**
+ * @author Gasper
+ * Poteze so izbrane po principu Minimax.
+ */
 public class Minimax extends SwingWorker<Poteza, Object> {
 	private GlavnoOkno master;
+	
+	/**
+	 * Kako globoko algoritem pregleduje.
+	 */
 	private int globina;
+	
+	/**
+	 * Barva, ki jo igra racunalnik.
+	 */
 	private Igralec jaz;
 	
 	public Minimax(GlavnoOkno master, int globina, Igralec jaz) {
@@ -18,7 +30,6 @@ public class Minimax extends SwingWorker<Poteza, Object> {
 		this.master = master;
 		this.globina = globina;
 		this.jaz = jaz;
-		
 	}
 
 	@Override
@@ -26,7 +37,6 @@ public class Minimax extends SwingWorker<Poteza, Object> {
 		Igra igra = master.copyIgra();
 		OcenjenaPoteza p = minimax(0, igra);
 		assert (p.poteza != null);
-		System.out.println("Minimax: " + p);
 		return p.poteza;
 	}
 	
@@ -39,6 +49,12 @@ public class Minimax extends SwingWorker<Poteza, Object> {
 		}
 	}
 	
+	/**
+	 * Z uporabo metode minimax vrne najboljso potezo v igri.
+	 * @param k - stevec globine
+	 * @param igra
+	 * @return najboljse ocenjena poteza; null ce je ni.
+	 */
 	private OcenjenaPoteza minimax(int k, Igra igra) {
 		Igralec naPotezi = null;
 		switch (igra.stanje()){
@@ -53,6 +69,7 @@ public class Minimax extends SwingWorker<Poteza, Object> {
 			return new OcenjenaPoteza(null, Ocena.NEODLOCENO);
 		default: break;
 		}
+		assert (naPotezi != null);
 		if (k >= globina) {
 			// Ce dosezemo maksimalno mozno globino, vrnemo le oceno pozicije
 			return new OcenjenaPoteza(null, Ocena.oceniPozicijo(jaz, igra));
@@ -80,6 +97,7 @@ public class Minimax extends SwingWorker<Poteza, Object> {
 				ocenaNajboljse = ocenaP;
 			}
 		}
+		assert (najboljsa != null);
 		return new OcenjenaPoteza(najboljsa, ocenaNajboljse);
 	}
 }

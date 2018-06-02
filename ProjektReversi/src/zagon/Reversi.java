@@ -1,5 +1,7 @@
 package zagon;
 
+import java.io.IOException;
+
 import gui.GlavnoOkno;
 
 /**
@@ -8,7 +10,7 @@ import gui.GlavnoOkno;
  */
 public class Reversi {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		GlavnoOkno okno = new GlavnoOkno();
 		okno.pack();
 		okno.setLocationRelativeTo(null);

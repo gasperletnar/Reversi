@@ -86,11 +86,11 @@ public class Igra {
 			System.out.print("|");
 			for (int j = 0; j < N; j++) {
 				switch (plosca[i][j]) {
-				case CRNO: System.out.print("B"); break;
-				case BELO: System.out.print("C"); break;
-				case PRAZNO: System.out.print("."); break;
+				case CRNO: System.out.print("\u25CB"); break;
+				case BELO: System.out.print("\u25CF"); break;
+				case PRAZNO: System.out.print(" "); break;
 				}
-				if (j<N-1) System.out.print("  ");
+				if (j<N-1) System.out.print("-");
 			}
 			System.out.println("|");
 		}
@@ -191,12 +191,19 @@ public class Igra {
 	 */
 	public void izpisDovoljenih() {
 		if (seznamDovoljenih().isEmpty()) {
-			System.out.println("Nobena poteza ni vec mozna.");
+			System.out.println("Nobena poteza ni več možna.");
 		} else {
 			System.out.print("Polja, kjer lahko igramo potezo(x, y): ");
 			List<Poteza> s = seznamDovoljenih();
+			int l = 0;
 			for (Poteza mozna : s) {
 				System.out.print("(" + (mozna.vrstica + 1) + ", " + (mozna.stolpec + 1) + ")");
+				l++;
+				if (l < s.size()) {
+					System.out.print(", ");
+				} else {
+					System.out.print(".");
+				}
 			}
 			System.out.println();
 		}

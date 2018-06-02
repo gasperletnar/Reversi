@@ -2,6 +2,10 @@ package inteligenca;
 
 import logika.Poteza;
 
+/**
+ * @author Gasper
+ * Predstavlja par: poteza in njena ocena.
+ */
 public class OcenjenaPoteza {
 	Poteza poteza;
 	int vrednost;

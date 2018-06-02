@@ -9,6 +9,10 @@ import gui.GlavnoOkno;
 import logika.Igra;
 import logika.Poteza;
 
+/**
+ * @author Gasper
+ * Poteze so na vsakem koraku izbrane nakljucno.
+ */
 public class NakljucnaInteligenca extends SwingWorker<Poteza, Object> {
 	private GlavnoOkno master;
 	
@@ -23,7 +27,7 @@ public class NakljucnaInteligenca extends SwingWorker<Poteza, Object> {
 		for (int i = 0; i < 5; i++) {
 			System.out.println("Razmisljam.");
 			try {
-				Thread.sleep(100); // Za 500 milisekund ustavi nadaljevanje zanke.
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				if (this.isCancelled()) {
 					System.out.println("Prekinjeno!");
@@ -34,7 +38,7 @@ public class NakljucnaInteligenca extends SwingWorker<Poteza, Object> {
 		System.out.println("Igram.");
 		List<Poteza> poteze = igra.seznamDovoljenih();
 		Random r = new Random();
-		Poteza p = poteze.get(r.nextInt(poteze.size())); // Izbere nakljucno potezo med vkljucno 0 do vkljucno n-1. (n - stevilo dovoljenih)
+		Poteza p = poteze.get(r.nextInt(poteze.size()));
 		return p;
 	}
 	
