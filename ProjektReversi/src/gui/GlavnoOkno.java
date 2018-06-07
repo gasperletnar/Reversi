@@ -295,19 +295,19 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		}
 		if (e.getSource() == lahko){
 			tezavnost = 1;
-			Ocena.nastaviVrednosti (1, 1, -1, -1, 1, 1);
+			Ocena.nastaviVrednosti (1, 3, -1, -1, 1, 1);
 		}
 		if (e.getSource() == srednje){
 			tezavnost = 2;
-			Ocena.nastaviVrednosti (1, 3, -1, -2, 2, 1);
+			Ocena.nastaviVrednosti (1, 10, -2, -3, 2, 1);
 		}
 		if (e.getSource() == tezko){
 			tezavnost = 3;
-			Ocena.nastaviVrednosti (1, 5, -2, -3, 2, 1);
+			Ocena.nastaviVrednosti (1, 20, -5, -10, 3, 2);
 		}
 		if (e.getSource() == zeloTezko){
 			tezavnost = 4;
-			Ocena.nastaviVrednosti (1, 10, -3, -5, 3, 1);
+			Ocena.nastaviVrednosti (1, 50, -10, -20, 5, 2);
 		}
 	}
 	
