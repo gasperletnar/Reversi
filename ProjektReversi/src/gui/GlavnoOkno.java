@@ -295,7 +295,7 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		}
 		if (e.getSource() == lahko){
 			tezavnost = 1;
-			Ocena.nastaviVrednosti (1, 3, -1, -1, 1, 1);
+			Ocena.nastaviVrednosti (1, 5, -1, -2, 1, 1);
 		}
 		if (e.getSource() == srednje){
 			tezavnost = 2;
